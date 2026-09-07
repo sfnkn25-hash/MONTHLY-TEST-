@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Markazi Jamiatul Madina</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .header { background-color: #1a5d2e; color: white; text-align: center; padding: 20px 10px; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .header p { margin: 5px 0 0 0; font-size: 14px; opacity: 0.9; }
+        
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        h3 { text-align: center; color: #1a5d2e; margin-bottom: 20px; }
+        label { font-weight: bold; color: #444; font-size: 14px; display: block; margin-top: 15px; }
+        select, input { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        
+        .btn-search { background-color: #1a5d2e; color: white; width: 100%; padding: 15px; margin-top: 20px; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .btn-search:disabled { background-color: #888; }
+        
+        #errorMsg { color: red; text-align: center; font-weight: bold; margin-top: 15px; }
+        
+        /* Result Card Styles */
+        #resultCard { display: none; margin-top: 30px; border: 2px solid #1a5d2e; border-radius: 8px; overflow: hidden; }
+        .card-header { background-color: #1a5d2e; color: white; text-align: center; padding: 15px; font-weight: bold; font-size: 18px; }
+        .student-info { padding: 15px; background: #e8f5e9; display: flex; align-items: center; gap: 15px; }
+        .student-photo { width: 80px; height: 100px; border-radius: 5px; border: 2px solid #1a5d2e; object-fit: cover; }
+        .info-text p { margin: 5px 0; font-size: 15px; color: #333; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #1a5d2e; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        
+        .total-section { padding: 15px; background: #fff3cd; text-align: center; font-size: 16px; font-weight: bold; color: #856404; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Student Portal</h1>
+        <p>Markazi Jamiatul Madina, Malegaon</p>
+    </div>
+
+    <div class="container">
+        <!-- Search Section -->
+        <div id="searchSection">
+            <h3>Check Your Result</h3>
+            
+            <label>Select Month (Mahina):</label>
+            <select id="searchMonth">
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </select>
+
+            <label>Dakhila Number (Roll No):</label>
+            <input type="text" id="searchDakhila" placeholder="Enter Dakhila Number">
+
+            <button class="btn-search" id="searchBtn" onclick="fetchResult()">Get Result</button>
+            <p id="errorMsg"></p>
+        </div>
+
+        <!-- Result Display Section -->
+        <div id="resultCard">
+            <div class="card-header">Monthly Test Result - <span id="resMonth"></span></div>
+            
+            <div class="student-info">
+                <img id="resPhoto" class="student-photo" src="https://via.placeholder.com/80x100?text=No+Photo" alt="Student Photo">
+                <div class="info-text">
+                    <p><b>Name:</b> <span id="resName"></span></p>
+                    <p><b>Dakhila No:</b> <span id="resDakhila"></span></p>
+                    <p><b>Class:</b> <span id="resClass"></span></p>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject (Kitab)</th>
+                        <th>Max</th>
+                        <th>Pass</th>
+                        <th>Obtained</th>
+                    </tr>
+                </thead>
+                <tbody id="marksTableBody">
+                    <!-- Marks will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+
+            <div class="total-section" id="resTotal">
+                <!-- Total details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Yahan hum baad mein apni Google Sheet ka lamba link dalenge
+        const API_URL = ""; 
+
+        function fetchResult() {
+            const month = document.getElementById('searchMonth').value;
+            const dakhila = document.getElementById('searchDakhila').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const searchBtn = document.getElementById('searchBtn');
+            const resultCard = document.getElementById('resultCard');
+
+            if(!API_URL) {
+                errorMsg.innerText = "Abhi Google Sheet ka link nahi dala gaya hai!";
+                return;
+            }
+            if(!dakhila) {
+                errorMsg.innerText = "Please Dakhila Number daalein.";
+                return;
+            }
+
+            errorMsg.innerText = "🔍 Result dhoondh raha hai... kripya intezar karein.";
+            errorMsg.style.color = "blue";
+            searchBtn.disabled = true;
+            resultCard.style.display = "none";
+
+            fetch(API_URL)
+            .then(res => res.json())
+            .then(data => {
+                searchBtn.disabled = false;
+                
+                if(data.status === "success") {
+                    // Find student matching both Dakhila and Month
+                    const student = data.data.find(s => s.Dakhila == dakhila && s.Month == month);
+                    
+                    if(student) {
+                        errorMsg.innerText = "";
+                        showResult(student);
+                    } else {
+                        errorMsg.innerText = `Sorry! ${month} ka result abhi is Dakhila number par upload nahi hua hai.`;
+                        errorMsg.style.color = "red";
+                    }
+                } else {
+                    errorMsg.innerText = "Data laane mein masla hua.";
+                    errorMsg.style.color = "red";
+                }
+            })
+            .catch(err => {
+                searchBtn.disabled = false;
+                errorMsg.innerText = "❌ Internet ka masla hai ya link galat hai.";
+                errorMsg.style.color = "red";
+            });
+        }
+
+        function showResult(data) {
+            document.getElementById('resMonth').innerText = data.Month;
+            document.getElementById('resName').innerText = data.Name;
+            document.getElementById('resDakhila').innerText = data.Dakhila;
+            document.getElementById('resClass').innerText = data.Class;
+            
+            const photoEl = document.getElementById('resPhoto');
+            if(data.Photo && data.Photo !== "") {
+                photoEl.src = data.Photo;
+            } else {
+                photoEl.src = "https://via.placeholder.com/80x100?text=No+Photo";
+            }
+
+            const tbody = document.getElementById('marksTableBody');
+            tbody.innerHTML = "";
+            
+            let totalMax = 0;
+            let totalObt = 0;
+            let subjects = [];
+
+            try {
+                subjects = JSON.parse(data.Subjects);
+            } catch(e) {
+                console.log("Subjects JSON parse error", e);
+            }
+
+            subjects.forEach(sub => {
+                totalMax += parseInt(sub.max) || 0;
+                totalObt += parseInt(sub.obt) || 0;
+                
+                // Highlight red if failed (obt < pass)
+                const isFail = parseInt(sub.obt) < parseInt(sub.pass);
+                const colorStyle = isFail ? "color: red; font-weight: bold;" : "";
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${sub.name}</td>
+                    <td>${sub.max}</td>
+                    <td>${sub.pass}</td>
+                    <td style="${colorStyle}">${sub.obt}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const percent = totalMax > 0 ? ((totalObt / totalMax) * 100).toFixed(2) : 0;
+            
+            document.getElementById('resTotal').innerHTML = `
+                Total Marks: ${totalObt} / ${totalMax} <br>
+                Percentage: ${percent}%
+            `;
+
+            document.getElementById('resultCard').style.display = "block";
+        }
+    </script>
+</body>
+</html>
