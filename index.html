@@ -65,13 +65,24 @@
             
 
         <label>Dakhila Number (Roll No):</label>
-        <input type="text" id="dakhila" placeholder="Maslan: 9119-003307" required>
+        <input type="text" id="dakhila" placeholder= required>
 
         <label>Student Name (Naam):</label>
         <input type="text" id="name" placeholder="Bacche ka naam" required>
 
         <label>Class (Darja):</label>
-        <input type="text" id="class" placeholder="Maslan: RABIA" required>
+                <select id="class" required>
+            <option value="">Select Class (Darja)</option>
+            <option value="IBTIDAYA MADNI">IBTIDAYA MADNI</option>
+            <option value="IBTIDAYA MAKKI">IBTIDAYA MAKKI</option>
+            <option value="AWWAL">AWWAL</option>
+            <option value="DUWAM">DUWAM</option>
+            <option value="ULA">ULA</option>
+            <option value="SANIYA">SANIYA</option>
+            <option value="SALISA">SALISA</option>
+            <option value="RABIA">RABIA</option>
+                </select>
+        
 
         <label>Student Photo URL (Link):</label>
         <input type="url" id="photo" placeholder="Photo ka link daalein (Optional)">
@@ -86,7 +97,7 @@
                 <div class="book-row">
                     <input type="text" class="b-name" placeholder="Book Name" required>
                     <input type="number" class="b-max" placeholder="Max" value="100" required>
-                    <input type="number" class="b-pass" placeholder="Pass" value="33" required>
+                    <input type="number" class="b-pass" placeholder="Pass" value="40" required>
                     <input type="number" class="b-obt" placeholder="Obtained" required>
                     <button type="button" class="btn-remove" onclick="this.parentElement.remove()">X</button>
                 </div>
