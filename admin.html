@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Markazi Jamiatul Madina</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f1; margin: 0; padding: 15px; }
+        .container { max-width: 650px; background: white; padding: 25px; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #1a5d2e; border-bottom: 3px solid #1a5d2e; padding-bottom: 10px; margin-top: 0; }
+        
+        /* Search Box Style */
+        .search-box { background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c8e6c9; }
+        .search-box h4 { margin: 0 0 10px 0; color: #2e7d32; font-size: 16px; }
+        .btn-search { background: #ff9800; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: bold; }
+        
+        /* Form Style */
+        label { font-weight: bold; margin-top: 15px; display: block; color: #444; font-size: 14px; }
+        input, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 15px; }
+        input:focus, select:focus { border-color: #1a5d2e; outline: none; }
+        
+        /* Books Section */
+        .books-container { margin-top: 20px; border: 2px dashed #1a5d2e; padding: 15px; border-radius: 8px; background: #fafafa; }
+        .book-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        .book-row input { margin-top: 0; padding: 8px; }
+        .btn-add { background: #007bff; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 15px; display: inline-block; }
+        .btn-remove { background: #dc3545; color: white; border: none; padding: 0 12px; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        
+        .btn-submit { background: #1a5d2e; color: white; width: 100%; padding: 15px; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; margin-top: 25px; font-weight: bold; }
+        .btn-submit:hover { background: #144923; }
+        .message { text-align: center; margin-top: 15px; font-weight: bold; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Admin Portal - Result Entry</h2>
+
+    <!-- Naya Feature: Purana Result Check Karne Ka Section -->
+    <div class="search-box">
+        <h4>🔍 Pehle Se Uploaded Result Check Karein</h4>
+        <input type="text" id="searchDakhila" placeholder="Dakhila Number Daalein...">
+        <button type="button" class="btn-search" onclick="searchStudent()">Check Result Status</button>
+        <p id="searchMsg" style="font-size: 14px; margin-bottom: 0; margin-top: 10px; text-align: center;"></p>
+    </div>
+
+    <!-- Result Entry Form -->
+    <form id="adminForm">
+        <label>Select Month (Mahina):</label>
+        <select id="month" required>
+            <option value="">Select Month</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+        </select>
+
+        <label>Dakhila Number (Roll No):</label>
+        <input type="text" id="dakhila" placeholder="Maslan: 9119-003307" required>
+
+        <label>Student Name (Naam):</label>
+        <input type="text" id="name" placeholder="Bacche ka naam" required>
+
+        <label>Class (Darja):</label>
+        <input type="text" id="class" placeholder="Maslan: RABIA" required>
+
+        <label>Student Photo URL (Link):</label>
+        <input type="url" id="photo" placeholder="Photo ka link daalein (Optional)">
+
+        <div class="books-container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label style="margin-top: 0;">📚 Subject Marks (Kitabon ke Number)</label>
+                <button type="button" class="btn-add" onclick="addBook()">+ Add Book</button>
+            </div>
+            
+            <div id="booksList">
+                <div class="book-row">
+                    <input type="text" class="b-name" placeholder="Book Name" required>
+                    <input type="number" class="b-max" placeholder="Max" value="100" required>
+                    <input type="number" class="b-pass" placeholder="Pass" value="33" required>
+                    <input type="number" class="b-obt" placeholder="Obtained" required>
+                    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">X</button>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">💾 Save Result to Internet</button>
+        <p id="msg" class="message"></p>
+    </form>
+</div>
+
+<script>
+    // Yahan hum baad mein apni Google Sheet ka lamba link dalenge
+    const API_URL = ""; 
+
+    function addBook() {
+        const list = document.getElementById("booksList");
+        const row = document.createElement("div");
+        row.className = "book-row";
+        row.innerHTML = `
+            <input type="text" class="b-name" placeholder="Book Name" required>
+            <input type="number" class="b-max" placeholder="Max" value="100" required>
+            <input type="number" class="b-pass" placeholder="Pass" value="33" required>
+            <input type="number" class="b-obt" placeholder="Obtained" required>
+            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">X</button>
+        `;
+        list.appendChild(row);
+    }
+
+    document.getElementById('adminForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if(!API_URL) {
+            alert("Abhi Google Sheet ka link dalna baaki hai! Kripya pehle link update karein.");
+            return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        const msg = document.getElementById('msg');
+        btn.innerText = "⏳ Saving Data...";
+        btn.disabled = true;
+        msg.innerText = "";
+
+        const books = document.querySelectorAll('.book-row');
+        let subjectsData = [];
+        books.forEach(b => {
+            subjectsData.push({
+                name: b.querySelector('.b-name').value,
+                max: b.querySelector('.b-max').value,
+                pass: b.querySelector('.b-pass').value,
+                obt: b.querySelector('.b-obt').value
+            });
+        });
+
+        const data = {
+            "Month": document.getElementById('month').value,
+            "Dakhila": document.getElementById('dakhila').value,
+            "Name": document.getElementById('name').value,
+            "Class": document.getElementById('class').value,
+            "Photo": document.getElementById('photo').value,
+            "Subjects": JSON.stringify(subjectsData)
+        };
+
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(data)
+        }).then(() => {
+            msg.style.color = "green";
+            msg.innerText = "✅ Result Online Save Ho Gaya!";
+            btn.innerText = "💾 Save Result to Internet";
+            btn.disabled = false;
+            document.getElementById('adminForm').reset();
+        }).catch(err => {
+            msg.style.color = "red";
+            msg.innerText = "❌ Internet ka masla hai ya link galat hai.";
+            btn.innerText = "💾 Save Result to Internet";
+            btn.disabled = false;
+        });
+    });
+
+    function searchStudent() {
+        const searchVal = document.getElementById('searchDakhila').value;
+        const searchMsg = document.getElementById('searchMsg');
+        
+        if(!API_URL) {
+            searchMsg.innerText = "⚠️ Abhi Google Sheet ka link nahi dala hai.";
+            searchMsg.style.color = "red";
+            return;
+        }
+        if(!searchVal) {
+            searchMsg.innerText = "⚠️ Pehle Dakhila Number daalein.";
+            searchMsg.style.color = "red";
+            return;
+        }
+
+        searchMsg.innerText = "⏳ Dhoondh raha hai...";
+        searchMsg.style.color = "blue";
+
+        fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === "success") {
+                const student = data.data.find(s => s.Dakhila == searchVal);
+                if(student) {
+                    searchMsg.innerHTML = `✅ <b>${student.Name}</b> (Class: ${student.Class}) ka result pehle se sheet mein maujood hai.`;
+                    searchMsg.style.color = "green";
+                } else {
+                    searchMsg.innerText = "❌ Is Dakhila number ka koi result nahi mila. Aap naya form bhar sakte hain.";
+                    searchMsg.style.color = "red";
+                }
+            }
+        })
+        .catch(err => {
+            searchMsg.innerText = "❌ Check karne mein masla aaya. Link check karein.";
+            searchMsg.style.color = "red";
+        });
+    }
+</script>
+
+</body>
+</html>
