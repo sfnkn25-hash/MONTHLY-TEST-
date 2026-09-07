@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madarsa Student Portal</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; }
+        .header-top { background-color: #1b5e20; padding: 15px; text-align: center; color: white; }
+        .header-top h1 { margin: 0; font-size: 24px; }
+        .container { max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); box-sizing: border-box; width: 95%; }
+        .hidden { display: none; }
+        input, select { padding: 12px; margin: 8px 0 20px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; width: 100%; font-size: 16px; }
+        .btn-submit { background-color: #1b5e20; color: white; border: none; padding: 12px 20px; cursor: pointer; border-radius: 5px; width: 100%; font-size: 18px; font-weight: bold; }
+        .btn-submit:hover { background-color: #144d18; }
+        .result-card { border: 2px solid #1b5e20; padding: 15px; border-radius: 10px; position: relative; margin-bottom: 20px; box-sizing: border-box; width: 100%; overflow: hidden; }
+        .header-section { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #1b5e20; padding-bottom: 10px; margin-bottom: 15px; gap: 5px; }
+        .logo { width: 75px; height: 75px; object-fit: contain; }
+        .institute-name { text-align: center; flex-grow: 1; color: #1b5e20; }
+        .institute-name h2 { margin: 0; font-size: 18px; }
+        .institute-name h3 { margin: 3px 0; font-size: 14px; }
+        .institute-name p { margin: 0; font-weight: bold; font-size: 13px; }
+        .student-photo { width: 80px; height: 100px; object-fit: cover; border: 2px solid #ccc; }
+        .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 15px; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 14px; }
+        th { background-color: #e8f5e9; color: #1b5e20; }
+        .pass { color: green; font-weight: bold; }
+        .fail { color: red; font-weight: bold; }
+        .progress-box { background: #fff3e0; padding: 10px; border-radius: 8px; border: 1px solid #ffb74d; box-sizing: border-box; width: 100%; }
+        .progress-box h3 { margin-top: 0; font-size: 16px; text-align: center; color: #e65100; }
+        .action-btns { text-align: center; margin-top: 15px; }
+        .btn-print { background-color: #d32f2f; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn-back { background-color: #757575; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; margin-left: 10px; }
+        @media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            body { background: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; }
+            body * { visibility: hidden; } 
+            .header-top, .action-btns { display: none !important; }
+            #resultSection, #resultSection * { visibility: visible; }
+            #resultSection { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+            .result-card { border: 2px solid #1b5e20; box-shadow: none; width: 100%; page-break-inside: avoid; }
+            .progress-box { border: 1px solid #ffb74d; box-shadow: none; width: 100%; }
+            .table-responsive { overflow-x: visible; }
+            table { min-width: 100%; word-break: break-word; white-space: normal; } 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-top">
+        <h1>Student Portal</h1>
+        <p style="margin:5px 0 0 0; font-size:14px;">Markazi Jamiatul Madina, Malegaon</p>
+    </div>
+
+    <div id="searchSection" class="container">
+        <h2 style="text-align:center; color: #1b5e20;">Check Your Result</h2>
+        <label>Select Month (Mahina):</label>
+        <select id="searchMonth">
+            <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+            <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+            <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+            <option value="October">October</option><option value="November">November</option><option value="December">December</option>
+        </select>
+        <label>Dakhila Number (Roll No):</label>
+        <input type="text" id="searchDakhila" placeholder="Enter Your Dakhila Number">
+        <button class="btn-submit" id="searchBtn" onclick="searchStudent()">Get Result</button>
+        <p id="errorMsg" style="color:red; text-align:center; font-weight:bold; margin-top:15px;"></p>
+    </div>
+
+    <div id="resultSection" class="container hidden">
+        <div class="result-card" id="printArea">
+            <div class="header-section">
+                <img src="https://upload.wikimedia.org/wikipedia/en/6/6f/Dawat-e-Islami.png" alt="Logo" class="logo">
+                <div class="institute-name">
+                    <h2>Markazi Jamiatul Madina</h2>
+                    <h3>Faizane Farooque Azam, Malegaon</h3>
+                    <p>Monthly Test Result - <span id="resMonthName" style="color:#d32f2f;"></span></p>
+                </div>
+                <img id="resPhoto" src="" alt="Student Photo" class="student-photo">
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px;">
+                <div><p style="margin: 2px 0;"><strong>Name:</strong> <span id="resName"></span></p><p style="margin: 2px 0;"><strong>Dakhila No:</strong> <span id="resDakhila"></span></p></div>
+                <div><p style="margin: 2px 0;"><strong>Class:</strong> <span id="resClass"></span></p></div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Book (Kitab)</th><th>Total</th><th>Passing</th><th>Obtained</th><th>Status</th></tr></thead>
+                    <tbody id="resTableBody"></tbody>
+                </table>
+            </div>
+
+            <div style="background: #e8f5e9; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px; font-size: 14px;">
+                <strong>Grand Total:</strong> <span id="resTotal"></span> | <strong>Obtained:</strong> <span id="resObtained"></span> | <strong>Percentage:</strong> <span id="resPercent"></span>% | <strong>Final Result:</strong> <span id="resFinal"></span>
+            </div>
+
+            <div class="progress-box">
+                <h3>All Months Progress Record</h3>
+                <div class="table-responsive" style="margin-bottom: 0;">
+                    <table>
+                        <thead><tr><th>Month</th><th>Total</th><th>Obtained</th><th>Percentage</th></tr></thead>
+                        <tbody id="progressTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-btns">
+            <button class="btn-print" onclick="window.print()">Download PDF (A4)</button>
+            <button class="btn-back" onclick="goBack()">Search Again</button>
+        </div>
+    </div>
+
+    <script>
+        // YAHAN AAPKA NAYA GOOGLE SHEET KA LINK LAGAYA GAYA HAI
+        const API_URL = "https://script.google.com/macros/s/AKfycby-UoeRHRg5dIGJUPjbRGbTqmCI6MeJx07RJ7AvOaOwQPiLoz4MFSHxnWJVFC9Nb27Q/exec";
+
+        async function searchStudent() {
+            let dakhila = document.getElementById('searchDakhila').value;
+            let month = document.getElementById('searchMonth').value;
+            let errorMsg = document.getElementById('errorMsg');
+            let searchBtn = document.getElementById('searchBtn');
+
+            if (!dakhila) return errorMsg.innerText = "Please enter Dakhila Number.";
+
+            errorMsg.innerText = "Internet se result dhoondh raha hai... ⏳";
+            errorMsg.style.color = "#f57c00";
+            searchBtn.disabled = true;
+
+            try {
+                let res = await fetch(API_URL + "?dakhila=" + dakhila);
+                let data = await res.json();
+
+                if(data.error) {
+                    errorMsg.style.color = "red";
+                    errorMsg.innerText = "Dakhila Number Galat Hai Ya Record Nahi Mila!";
+                } else {
+                    let student = data;
+                    if(student.monthlyRecords && student.monthlyRecords[month]) {
+                        errorMsg.innerText = "";
+                        renderResult(student, month);
+                        document.getElementById('searchSection').classList.add('hidden');
+                        document.getElementById('resultSection').classList.remove('hidden');
+                    } else {
+                        errorMsg.style.color = "red";
+                        errorMsg.innerText = `Sorry! ${month} ka result abhi upload nahi hua hai.`;
+                    }
+                }
+            } catch(e) {
+                errorMsg.style.color = "red";
+                errorMsg.innerText = "Internet connection check karein!";
+            }
+            searchBtn.disabled = false;
+        }
+
+        function renderResult(student, selectedMonth) {
+            document.getElementById('resName').innerText = student.name;
+            document.getElementById('resDakhila').innerText = student.dakhila;
+            document.getElementById('resClass').innerText = student.class;
+            document.getElementById('resPhoto').src = student.photo && student.photo !== "https://via.placeholder.com/100?text=Photo" ? student.photo : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+            document.getElementById('resMonthName').innerText = selectedMonth;
+
+            let record = student.monthlyRecords[selectedMonth];
+            let tbody = document.getElementById('resTableBody');
+            tbody.innerHTML = '';
+            let isFail = false;
+
+            record.marks.forEach(m => {
+                let status = m.obt >= m.pass ? "<span class='pass'>Pass</span>" : "<span class='fail'>Fail</span>";
+                if(m.obt < m.pass) isFail = true;
+                tbody.innerHTML += `<tr><td>${m.name}</td><td>${m.tot}</td><td>${m.pass}</td><td>${m.obt}</td><td>${status}</td></tr>`;
+            });
+
+            document.getElementById('resTotal').innerText = record.grandTotal;
+            document.getElementById('resObtained').innerText = record.totalObtained;
+            let percentage = record.grandTotal > 0 ? ((record.totalObtained / record.grandTotal) * 100).toFixed(2) : 0;
+            document.getElementById('resPercent').innerText = percentage;
+
+            let finalRes = document.getElementById('resFinal');
+            if(isFail) finalRes.innerHTML = "<span class='fail'>FAIL</span>";
+            else finalRes.innerHTML = "<span class='pass'>PASS</span>";
+
+            let progressBody = document.getElementById('progressTableBody');
+            progressBody.innerHTML = '';
+            for(let m in student.monthlyRecords) {
+                let mRecord = student.monthlyRecords[m];
+                let mPercent = mRecord.grandTotal > 0 ? ((mRecord.totalObtained / mRecord.grandTotal) * 100).toFixed(2) : 0;
+                progressBody.innerHTML += `<tr><td><strong>${m}</strong></td><td>${mRecord.grandTotal}</td><td>${mRecord.totalObtained}</td><td>${mPercent}%</td></tr>`;
+            }
+        }
+
+        function goBack() {
+            document.getElementById('searchDakhila').value = "";
+            document.getElementById('errorMsg').innerText = "";
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('searchSection').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
