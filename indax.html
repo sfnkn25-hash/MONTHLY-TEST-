@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Madarsa Student Portal</title>
+<title>Madarsa Admin Panel</title>
 
 <style>
 *{
@@ -37,7 +37,7 @@ font-size:14px;
 
 .container{
 width:95%;
-max-width:950px;
+max-width:1000px;
 margin:20px auto;
 background:white;
 padding:20px;
@@ -45,20 +45,17 @@ border-radius:12px;
 box-shadow:0 3px 12px rgba(0,0,0,.12);
 }
 
-.hidden{
-display:none;
-}
-
-.search-title{
-text-align:center;
+h2{
 color:#1b5e20;
+text-align:center;
+margin-top:0;
 }
 
 label{
 display:block;
 font-weight:bold;
-margin-top:15px;
-margin-bottom:6px;
+margin-top:12px;
+margin-bottom:5px;
 }
 
 input,select{
@@ -69,21 +66,77 @@ border-radius:6px;
 font-size:16px;
 }
 
-.search-btn{
-width:100%;
-margin-top:18px;
-padding:13px;
-background:#1b5e20;
-color:white;
+button{
 border:none;
 border-radius:6px;
-font-size:18px;
+padding:11px 18px;
+font-size:16px;
 font-weight:bold;
 cursor:pointer;
 }
 
-.search-btn:disabled{
-opacity:.6;
+.btn-green{
+background:#1b5e20;
+color:white;
+width:100%;
+margin-top:15px;
+}
+
+.btn-blue{
+background:#1565c0;
+color:white;
+}
+
+.btn-red{
+background:#d32f2f;
+color:white;
+}
+
+.btn-gray{
+background:#757575;
+color:white;
+}
+
+.month-box{
+border:1px solid #ddd;
+padding:15px;
+border-radius:8px;
+margin-top:20px;
+background:#fafafa;
+}
+
+.month-title{
+font-size:19px;
+font-weight:bold;
+color:#1b5e20;
+margin-bottom:12px;
+}
+
+.book-row{
+display:grid;
+grid-template-columns:2fr 1fr 1fr 1fr;
+gap:8px;
+margin-bottom:8px;
+align-items:center;
+}
+
+.book-row input{
+margin:0;
+}
+
+.book-head{
+font-weight:bold;
+text-align:center;
+}
+
+.buttons{
+display:flex;
+gap:10px;
+margin-top:20px;
+}
+
+.buttons button{
+flex:1;
 }
 
 .message{
@@ -92,254 +145,98 @@ font-weight:bold;
 margin-top:15px;
 }
 
-.result-card{
-border:2px solid #1b5e20;
-border-radius:10px;
-padding:15px;
-}
-
-.header-section{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:10px;
-border-bottom:2px solid #1b5e20;
-padding-bottom:12px;
-margin-bottom:15px;
-}
-
-.logo{
-width:70px;
-height:70px;
-object-fit:contain;
-}
-
-.institute{
-flex:1;
-text-align:center;
-color:#1b5e20;
-}
-
-.institute h2{
-margin:0;
-font-size:19px;
-}
-
-.institute h3{
-margin:4px 0;
-font-size:14px;
-}
-
-.institute p{
-margin:3px 0;
-font-weight:bold;
-font-size:13px;
-}
-
-.student-photo{
-width:80px;
-height:100px;
-object-fit:cover;
-border:2px solid #ccc;
-border-radius:4px;
-}
-
 .student-info{
+background:#e8f5e9;
+padding:15px;
+border-radius:8px;
+margin-top:20px;
+}
+
+.info-grid{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:10px;
-background:#f8faf8;
+}
+
+.records{
+margin-top:20px;
+}
+
+.record-month{
+border:1px solid #ddd;
+border-radius:8px;
+margin-bottom:15px;
 padding:12px;
-border-radius:7px;
-margin-bottom:15px;
 }
 
-.info-item{
-font-size:14px;
+.record-month h3{
+color:#1b5e20;
+margin-top:0;
 }
 
-.table-responsive{
-width:100%;
-overflow-x:auto;
-margin-bottom:15px;
-}
-
-table{
+.record-table{
 width:100%;
 border-collapse:collapse;
 }
 
-th,td{
+.record-table th,
+.record-table td{
 border:1px solid #ddd;
 padding:8px;
 text-align:center;
-font-size:14px;
 }
 
-th{
+.record-table th{
 background:#e8f5e9;
-color:#1b5e20;
 }
 
-.pass{
-color:green;
-font-weight:bold;
+.hidden{
+display:none;
 }
 
-.fail{
-color:red;
-font-weight:bold;
-}
-
-.summary{
-background:#e8f5e9;
-padding:12px;
-border-radius:7px;
-text-align:center;
-font-size:14px;
-line-height:1.8;
-}
-
-.progress-box{
-margin-top:18px;
-border:1px solid #ffb74d;
-background:#fff8ed;
-padding:12px;
-border-radius:8px;
-}
-
-.progress-title{
-text-align:center;
-color:#e65100;
-font-weight:bold;
-margin-bottom:10px;
-}
-
-.action-buttons{
-display:flex;
-gap:10px;
-margin-top:15px;
-}
-
-.action-buttons button{
-flex:1;
-padding:12px;
-border:none;
-border-radius:6px;
-color:white;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.print-btn{
-background:#d32f2f;
-}
-
-.back-btn{
-background:#757575;
+.small{
+font-size:13px;
+color:#666;
 }
 
 @media(max-width:600px){
 
 .container{
-padding:14px;
+padding:15px;
 }
 
-.header-section{
-gap:5px;
-}
-
-.logo{
-width:55px;
-height:55px;
-}
-
-.student-photo{
-width:65px;
-height:82px;
-}
-
-.institute h2{
-font-size:15px;
-}
-
-.institute h3{
-font-size:11px;
-}
-
-.institute p{
-font-size:11px;
-}
-
-.student-info{
+.info-grid{
 grid-template-columns:1fr;
 }
 
-th,td{
-font-size:12px;
-padding:7px;
+.book-row{
+grid-template-columns:1.5fr 1fr 1fr 1fr;
+gap:5px;
 }
 
-.action-buttons{
+.book-row input{
+font-size:13px;
+padding:9px;
+}
+
+.book-head{
+font-size:12px;
+}
+
+.buttons{
 flex-direction:column;
 }
 
 }
 
-@media print{
-
-@page{
-size:A4 portrait;
-margin:12mm;
-}
-
-body{
-background:white;
-}
-
-.header,
-#searchSection,
-.action-buttons{
-display:none !important;
-}
-
-#resultSection{
-display:block !important;
-width:100%;
-margin:0;
-padding:0;
-box-shadow:none;
-}
-
-.result-card{
-border:2px solid #1b5e20;
-box-shadow:none;
-}
-
-.progress-box{
-page-break-inside:avoid;
-}
-
-table{
-page-break-inside:auto;
-}
-
-tr{
-page-break-inside:avoid;
-}
-
-}
 </style>
-
 </head>
 
 <body>
 
-
 <div class="header">
 
-<h1>Student Portal</h1>
+<h1>Madarsa Admin Panel</h1>
 
 <p>
 Markazi Jamiatul Madina - Faizane Farooque Azam, Malegaon
@@ -348,288 +245,418 @@ Markazi Jamiatul Madina - Faizane Farooque Azam, Malegaon
 </div>
 
 
+<div class="container">
 
-<div
-id="searchSection"
-class="container">
-
-<h2 class="search-title">
-Check Your Result
-</h2>
+<h2>Student Result Management</h2>
 
 
-<label>
-Select Month (Mahina)
-</label>
-
-<select id="searchMonth">
-
-<option value="January">January</option>
-<option value="February">February</option>
-<option value="March">March</option>
-<option value="April">April</option>
-<option value="May">May</option>
-<option value="June">June</option>
-<option value="July">July</option>
-<option value="August">August</option>
-<option value="September">September</option>
-<option value="October">October</option>
-<option value="November">November</option>
-<option value="December">December</option>
-
-</select>
-
-
-<label>
-Dakhila Number
-</label>
+<label>Dakhila Number</label>
 
 <input
 type="text"
-id="searchDakhila"
+id="dakhila"
 placeholder="Enter Dakhila Number"
 >
 
 
+<div class="buttons">
+
 <button
-id="searchBtn"
-class="search-btn"
-onclick="searchStudent()">
-
-Get Result
-
+class="btn-blue"
+onclick="fetchStudentForEdit()">
+Search Student
 </button>
+
+<button
+class="btn-gray"
+onclick="clearForm()">
+Clear
+</button>
+
+</div>
 
 
 <div
-id="errorMsg"
+id="message"
 class="message">
 </div>
 
+
+<div id="studentForm" class="hidden">
+
+
+<div class="student-info">
+
+<h3 style="margin-top:0;color:#1b5e20">
+Student Information
+</h3>
+
+<div class="info-grid">
+
+<div>
+
+<label>Name</label>
+
+<input
+type="text"
+id="studentName"
+placeholder="Student Name"
+>
+
 </div>
 
 
+<div>
 
-<div
-id="resultSection"
-class="container hidden">
+<label>Class</label>
 
-
-<div
-class="result-card"
-id="printArea">
-
-
-<div class="header-section">
-
-
-<img
-class="logo"
-src="https://upload.wikimedia.org/wikipedia/en/6/6f/Dawat-e-Islami.png"
-alt="Logo"
+<input
+type="text"
+id="studentClass"
+placeholder="Class"
 >
 
+</div>
 
-<div class="institute">
+</div>
 
-<h2>
-Markazi Jamiatul Madina
-</h2>
 
-<h3>
-Faizane Farooque Azam, Malegaon
-</h3>
+<label>Student Photo URL</label>
 
-<p>
-Monthly Test Result -
-<span
-id="resMonthName"
-style="color:#d32f2f">
-</span>
+<input
+type="text"
+id="studentPhoto"
+placeholder="https://..."
+>
+
+<p class="small">
+Photo ka direct image URL yahan paste karein.
 </p>
 
 </div>
 
 
-<img
-id="resPhoto"
-class="student-photo"
-src=""
-alt="Student Photo"
->
 
+<div class="month-box">
+
+<div class="month-title">
+January
 </div>
 
-
-
-<div class="student-info">
-
-
-<div class="info-item">
-
-<strong>Name:</strong>
-
-<span id="resName"></span>
-
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
 </div>
 
-
-<div class="info-item">
-
-<strong>Dakhila No:</strong>
-
-<span id="resDakhila"></span>
-
-</div>
-
-
-<div class="info-item">
-
-<strong>Class:</strong>
-
-<span id="resClass"></span>
-
-</div>
-
-
-</div>
-
-
-
-<div class="table-responsive">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Book (Kitab)</th>
-
-<th>Total</th>
-
-<th>Passing</th>
-
-<th>Obtained</th>
-
-<th>Status</th>
-
-</tr>
-
-</thead>
-
-
-<tbody id="resTableBody">
-</tbody>
-
-</table>
-
-</div>
-
-
-
-<div class="summary">
-
-<strong>Grand Total:</strong>
-
-<span id="resTotal">
-0
-</span>
-
-&nbsp; | &nbsp;
-
-<strong>Obtained:</strong>
-
-<span id="resObtained">
-0
-</span>
-
-&nbsp; | &nbsp;
-
-<strong>Percentage:</strong>
-
-<span id="resPercent">
-0
-</span>%
-
-&nbsp; | &nbsp;
-
-<strong>Final Result:</strong>
-
-<span id="resFinal">
--
-</span>
-
-</div>
-
-
-
-<div class="progress-box">
-
-<div class="progress-title">
-All Months Progress Record
-</div>
-
-
-<div class="table-responsive">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Month</th>
-
-<th>Total</th>
-
-<th>Obtained</th>
-
-<th>Percentage</th>
-
-</tr>
-
-</thead>
-
-
-<tbody id="progressTableBody">
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-
-</div>
-
-
-
-<div class="action-buttons">
+<div id="JanuaryRows"></div>
 
 <button
-class="print-btn"
-onclick="window.print()">
-
-Download / Print PDF
-
-</button>
-
-
-<button
-class="back-btn"
-onclick="goBack()">
-
-Search Again
-
+class="btn-blue"
+onclick="addBookRow('January')">
++ Add Book
 </button>
 
 </div>
 
 
+
+<div class="month-box">
+
+<div class="month-title">
+February
 </div>
 
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="FebruaryRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('February')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="month-box">
+
+<div class="month-title">
+March
+</div>
+
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="MarchRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('March')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="month-box">
+
+<div class="month-title">
+April
+</div>
+
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="AprilRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('April')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="month-box">
+
+<div class="month-title">
+May
+</div>
+
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="MayRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('May')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="month-box">
+
+<div class="month-title">
+June
+</div>
+
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="JuneRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('June')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="month-box">
+
+<div class="month-title">
+July
+</div>
+
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="JulyRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('July')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="month-box">
+
+<div class="month-title">
+August
+</div>
+
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="AugustRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('August')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="month-box">
+
+<div class="month-title">
+September
+</div>
+
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="SeptemberRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('September')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="month-box">
+
+<div class="month-title">
+October
+</div>
+
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="OctoberRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('October')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="month-box">
+
+<div class="month-title">
+November
+</div>
+
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="NovemberRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('November')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="month-box">
+
+<div class="month-title">
+December
+</div>
+
+<div class="book-row book-head">
+<div>Book</div>
+<div>Total</div>
+<div>Passing</div>
+<div>Obtained</div>
+</div>
+
+<div id="DecemberRows"></div>
+
+<button
+class="btn-blue"
+onclick="addBookRow('December')">
++ Add Book
+</button>
+
+</div>
+
+
+
+<div class="buttons">
+
+<button
+class="btn-green"
+onclick="saveStudent()">
+💾 Save Result
+</button>
+
+<button
+class="btn-red"
+onclick="clearForm()">
+Reset
+</button>
+
+</div>
+
+
+</div>
+
+</div>
 
 
 <script>
@@ -639,362 +666,7 @@ const API_URL =
 "https://script.google.com/macros/s/AKfycbwg8IliKcdtdb8qF8DcuLhsVbZeWSujdUxr_-80-3DB2dvSiNJLge-sIRXCEBfBhNLYKw/exec";
 
 
-
-async function searchStudent(){
-
-const dakhila =
-document
-.getElementById("searchDakhila")
-.value
-.trim();
-
-
-const month =
-document
-.getElementById("searchMonth")
-.value;
-
-
-const message =
-document
-.getElementById("errorMsg");
-
-
-const button =
-document
-.getElementById("searchBtn");
-
-
-if(!dakhila){
-
-message.style.color="red";
-
-message.innerText =
-"Dakhila Number enter karein.";
-
-return;
-
-}
-
-
-message.style.color="#f57c00";
-
-message.innerText =
-"Result search ho raha hai... ⏳";
-
-
-button.disabled=true;
-
-
-try{
-
-
-const response =
-await fetch(
-API_URL +
-"?dakhila=" +
-encodeURIComponent(dakhila)
-);
-
-
-if(!response.ok){
-
-throw new Error(
-"Server response: " +
-response.status
-);
-
-}
-
-
-const data =
-await response.json();
-
-
-if(data.error){
-
-message.style.color="red";
-
-message.innerText =
-data.message ||
-"Student record nahi mila.";
-
-return;
-
-}
-
-
-if(
-!data.monthlyRecords ||
-!data.monthlyRecords[month]
-){
-
-message.style.color="red";
-
-message.innerText =
-month +
-" ka result abhi upload nahi hua hai.";
-
-return;
-
-}
-
-
-renderResult(
-data,
-month
-);
-
-
-message.innerText="";
-
-
-document
-.getElementById("searchSection")
-.classList.add("hidden");
-
-
-document
-.getElementById("resultSection")
-.classList.remove("hidden");
-
-
-}
-catch(error){
-
-console.error(error);
-
-message.style.color="red";
-
-message.innerText =
-"Server se connection nahi ho raha. Thodi der baad try karein.";
-
-}
-finally{
-
-button.disabled=false;
-
-}
-
-}
-
-
-
-function renderResult(
-student,
-selectedMonth
-){
-
-
-document
-.getElementById("resName")
-.innerText =
-student.name || "-";
-
-
-document
-.getElementById("resDakhila")
-.innerText =
-student.dakhila || "-";
-
-
-document
-.getElementById("resClass")
-.innerText =
-student.class || "-";
-
-
-document
-.getElementById("resMonthName")
-.innerText =
-selectedMonth;
-
-
-
-const photo =
-document.getElementById("resPhoto");
-
-
-if(student.photo){
-
-photo.src=student.photo;
-
-}
-else{
-
-photo.src =
-"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
-
-}
-
-
-
-const record =
-student.monthlyRecords[selectedMonth] ||
-{
-marks:[],
-grandTotal:0,
-totalObtained:0
-};
-
-
-
-const tbody =
-document.getElementById(
-"resTableBody"
-);
-
-
-tbody.innerHTML="";
-
-
-let isFail=false;
-
-
-const marks =
-Array.isArray(record.marks)
-? record.marks
-: [];
-
-
-marks.forEach(mark=>{
-
-
-const obtained =
-Number(mark.obt) || 0;
-
-
-const passing =
-Number(mark.pass) || 0;
-
-
-const total =
-Number(mark.tot) || 0;
-
-
-if(obtained < passing){
-
-isFail=true;
-
-}
-
-
-const status =
-obtained >= passing
-? "<span class='pass'>PASS</span>"
-: "<span class='fail'>FAIL</span>";
-
-
-const row =
-document.createElement("tr");
-
-
-row.innerHTML = `
-
-<td>${escapeHtml(mark.name || "-")}</td>
-
-<td>${total}</td>
-
-<td>${passing}</td>
-
-<td>${obtained}</td>
-
-<td>${status}</td>
-
-`;
-
-
-tbody.appendChild(row);
-
-});
-
-
-
-const grandTotal =
-Number(record.grandTotal) || 0;
-
-
-const totalObtained =
-Number(record.totalObtained) || 0;
-
-
-let percentage=0;
-
-
-if(grandTotal > 0){
-
-percentage =
-(
-totalObtained /
-grandTotal *
-100
-).toFixed(2);
-
-}
-
-
-
-document
-.getElementById("resTotal")
-.innerText =
-grandTotal;
-
-
-document
-.getElementById("resObtained")
-.innerText =
-totalObtained;
-
-
-document
-.getElementById("resPercent")
-.innerText =
-percentage;
-
-
-const finalResult =
-document.getElementById("resFinal");
-
-
-if(isFail){
-
-finalResult.innerHTML =
-"<span class='fail'>FAIL</span>";
-
-}
-else{
-
-finalResult.innerHTML =
-"<span class='pass'>PASS</span>";
-
-}
-
-
-
-renderProgress(
-student.monthlyRecords || {}
-);
-
-}
-
-
-
-function renderProgress(
-monthlyRecords
-){
-
-
-const tbody =
-document.getElementById(
-"progressTableBody"
-);
-
-
-tbody.innerHTML="";
-
-
 const months = [
-
 "January",
 "February",
 "March",
@@ -1007,87 +679,69 @@ const months = [
 "October",
 "November",
 "December"
-
 ];
 
 
-let found=false;
+let currentStudent = null;
 
 
-months.forEach(month=>{
 
+function showMessage(text,color){
 
-const record =
-monthlyRecords[month];
+const msg =
+document.getElementById("message");
 
+msg.innerText = text;
 
-if(!record){
-
-return;
+msg.style.color = color || "#222";
 
 }
 
 
-found=true;
 
+function addBookRow(month,name="",total="",pass="",obt=""){
 
-const total =
-Number(record.grandTotal) || 0;
-
-
-const obtained =
-Number(record.totalObtained) || 0;
-
-
-const percentage =
-total > 0
-? (
-obtained /
-total *
-100
-).toFixed(2)
-: 0;
-
+const container =
+document.getElementById(month+"Rows");
 
 const row =
-document.createElement("tr");
+document.createElement("div");
 
+row.className="book-row";
 
 row.innerHTML = `
 
-<td>
-<strong>${month}</strong>
-</td>
+<input
+type="text"
+class="book-name"
+placeholder="Book name"
+value="${escapeHtml(name)}"
+>
 
-<td>${total}</td>
+<input
+type="number"
+class="book-total"
+placeholder="Total"
+value="${total}"
+>
 
-<td>${obtained}</td>
+<input
+type="number"
+class="book-pass"
+placeholder="Passing"
+value="${pass}"
+>
 
-<td>${percentage}%</td>
-
-`;
-
-
-tbody.appendChild(row);
-
-});
-
-
-if(!found){
-
-tbody.innerHTML = `
-
-<tr>
-
-<td colspan="4">
-No monthly record available
-</td>
-
-</tr>
+<input
+type="number"
+class="book-obt"
+placeholder="Obtained"
+value="${obt}"
+>
 
 `;
 
-}
+container.appendChild(row);
 
 }
 
@@ -1095,46 +749,451 @@ No monthly record available
 
 function escapeHtml(value){
 
-return String(value)
-
+return String(value || "")
 .replace(/&/g,"&amp;")
-
 .replace(/</g,"&lt;")
-
 .replace(/>/g,"&gt;")
-
 .replace(/"/g,"&quot;")
-
 .replace(/'/g,"&#039;");
 
 }
 
 
 
-function goBack(){
+function clearMonthRows(){
 
+months.forEach(month=>{
 
-document
-.getElementById("searchDakhila")
-.value="";
+const container =
+document.getElementById(month+"Rows");
 
+container.innerHTML="";
 
-document
-.getElementById("errorMsg")
-.innerText="";
-
-
-document
-.getElementById("resultSection")
-.classList.add("hidden");
-
-
-document
-.getElementById("searchSection")
-.classList.remove("hidden");
+});
 
 }
 
+
+
+function clearForm(){
+
+document.getElementById("dakhila").value="";
+
+document.getElementById("studentName").value="";
+
+document.getElementById("studentClass").value="";
+
+document.getElementById("studentPhoto").value="";
+
+clearMonthRows();
+
+document
+.getElementById("studentForm")
+.classList.add("hidden");
+
+showMessage("");
+
+currentStudent=null;
+
+}
+
+
+
+async function fetchStudentForEdit(){
+
+const dakhila =
+document.getElementById("dakhila")
+.value.trim();
+
+
+if(!dakhila){
+
+showMessage(
+"Dakhila Number enter karein.",
+"red"
+);
+
+return;
+
+}
+
+
+showMessage(
+"Student ka record search ho raha hai... ⏳",
+"#f57c00"
+);
+
+
+try{
+
+const response =
+await fetch(
+API_URL +
+"?dakhila=" +
+encodeURIComponent(dakhila)
+);
+
+
+const data =
+await response.json();
+
+
+if(data.error){
+
+showMessage(
+data.message ||
+"Student nahi mila.",
+"red"
+);
+
+return;
+
+}
+
+
+currentStudent=data;
+
+loadStudent(data);
+
+showMessage(
+"Student record mil gaya ✅",
+"green"
+);
+
+}
+
+catch(error){
+
+console.error(error);
+
+showMessage(
+"Server se connection nahi ho raha. Web App URL aur deployment check karein.",
+"red"
+);
+
+}
+
+}
+
+
+
+function loadStudent(student){
+
+document
+.getElementById("studentForm")
+.classList.remove("hidden");
+
+
+document.getElementById("studentName").value =
+student.name || "";
+
+
+document.getElementById("studentClass").value =
+student.class || "";
+
+
+document.getElementById("studentPhoto").value =
+student.photo || "";
+
+
+clearMonthRows();
+
+
+const records =
+student.monthlyRecords || {};
+
+
+months.forEach(month=>{
+
+const record =
+records[month];
+
+
+if(
+record &&
+Array.isArray(record.marks)
+){
+
+record.marks.forEach(mark=>{
+
+addBookRow(
+month,
+mark.name || "",
+mark.tot || "",
+mark.pass || "",
+mark.obt || ""
+);
+
+});
+
+}
+
+});
+
+
+}
+
+
+
+function collectMonthData(month){
+
+const container =
+document.getElementById(month+"Rows");
+
+
+const rows =
+container.querySelectorAll(".book-row");
+
+
+const marks=[];
+
+
+rows.forEach(row=>{
+
+const name =
+row.querySelector(".book-name").value.trim();
+
+const tot =
+Number(
+row.querySelector(".book-total").value
+) || 0;
+
+const pass =
+Number(
+row.querySelector(".book-pass").value
+) || 0;
+
+const obt =
+Number(
+row.querySelector(".book-obt").value
+) || 0;
+
+
+if(name || tot || pass || obt){
+
+marks.push({
+name:name,
+tot:tot,
+pass:pass,
+obt:obt
+});
+
+}
+
+});
+
+
+let grandTotal=0;
+
+let totalObtained=0;
+
+
+marks.forEach(mark=>{
+
+grandTotal += Number(mark.tot) || 0;
+
+totalObtained += Number(mark.obt) || 0;
+
+});
+
+
+return {
+
+marks:marks,
+
+grandTotal:grandTotal,
+
+totalObtained:totalObtained
+
+};
+
+}
+
+
+
+function collectStudent(){
+
+const monthlyRecords={};
+
+
+months.forEach(month=>{
+
+const data =
+collectMonthData(month);
+
+
+if(data.marks.length>0){
+
+monthlyRecords[month]=data;
+
+}
+
+});
+
+
+return {
+
+name:
+document.getElementById("studentName")
+.value.trim(),
+
+class:
+document.getElementById("studentClass")
+.value.trim(),
+
+photo:
+document.getElementById("studentPhoto")
+.value.trim(),
+
+monthlyRecords:
+monthlyRecords
+
+};
+
+}
+
+
+
+async function saveStudent(){
+
+const dakhila =
+document.getElementById("dakhila")
+.value.trim();
+
+
+if(!dakhila){
+
+showMessage(
+"Dakhila Number enter karein.",
+"red"
+);
+
+return;
+
+}
+
+
+const student =
+collectStudent();
+
+
+if(!student.name){
+
+showMessage(
+"Student Name enter karein.",
+"red"
+);
+
+return;
+
+}
+
+
+showMessage(
+"Data save ho raha hai... ⏳",
+"#f57c00"
+);
+
+
+const payload={
+
+dakhila:dakhila,
+
+record:student
+
+};
+
+
+try{
+
+
+/*
+IMPORTANT:
+
+Content-Type header jaan-bujhkar nahi lagaya gaya hai,
+taaki GitHub se Apps Script POST me CORS preflight
+problem na aaye.
+*/
+
+
+const response =
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify(payload)
+
+});
+
+
+const data =
+await response.json();
+
+
+if(data.error){
+
+showMessage(
+data.message ||
+"Data save nahi hua.",
+"red"
+);
+
+return;
+
+}
+
+
+showMessage(
+"Student result successfully save ho gaya ✅",
+"green"
+);
+
+
+currentStudent = {
+
+dakhila:dakhila,
+
+name:student.name,
+
+class:student.class,
+
+photo:student.photo,
+
+monthlyRecords:student.monthlyRecords
+
+};
+
+}
+
+catch(error){
+
+console.error(error);
+
+showMessage(
+"Data save karte waqt server error aaya. Deployment aur Web App URL check karein.",
+"red"
+);
+
+}
+
+}
+
+
+
+/*
+Agar kisi month me pehle se koi book nahi hai,
+to ek blank row automatically dikhayenge.
+*/
+
+window.addEventListener("load",()=>{
+
+months.forEach(month=>{
+
+addBookRow(month);
+
+});
+
+});
 
 
 </script>
