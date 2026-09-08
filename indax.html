@@ -32,10 +32,8 @@
         .chat-box { background: #fdfbf7; padding: 15px; border-radius: 8px; margin-top: 15px; min-height: 100px; border: 2px solid #1a5d2e; }
         .ai-reply { font-size: 16px; color: #1a5d2e; line-height: 1.6; white-space: pre-wrap; font-family: Georgia, serif; }
         .urdu-text { font-size: 20px; color: #1a5d2e; text-align: center; font-weight: bold; margin-bottom: 10px; }
+        .voice-setting { background: #e8f5e9; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #1a5d2e; }
     </style>
-    
-    <!-- YAHAN NAYA VIP VOICE ENGINE LAGAYA HAI -->
-    <script src="https://code.responsivevoice.org/responsivevoice/responsivevoice.js"></script>
 </head>
 <body>
     <div class="header">
@@ -98,7 +96,15 @@
         <!-- CHAT SECTION -->
         <div id="sectionChat" style="display: none;">
             <div class="urdu-text">صلّو علی الحبیب! صلی اللہ تعالٰی علٰی محمد</div>
-            <h3 style="margin-top:0;">AI Mufti Sahab Se Masla Poochiye</h3>
+            
+            <!-- NAYA VOICE SELECTOR -->
+            <div class="voice-setting">
+                <label style="margin-top: 0;">🔊 Awaaz (Voice) Chunein:</label>
+                <select id="voiceSelect" style="margin-top: 5px; font-weight:bold;"></select>
+                <p style="font-size:12px; color:#555; margin:5px 0 0 0;">Agar aurat ki awaaz aaye, toh yahan se dusra option chun kar test karein.</p>
+            </div>
+
+            <h3 style="margin-top:10px;">AI Mufti Sahab Se Masla Poochiye</h3>
             <label>Apna Masla ya Sawal mic par bolein:</label>
             <div class="input-group">
                 <textarea id="aiQuestion" rows="3" placeholder="Sawal type karein ya mic dabayein..."></textarea>
@@ -115,48 +121,79 @@
     </div>
 
     <script>
-        // Aapka Sheet Link
+        // Aapka API URL 100% Sahi Hai
         const API_URL = "https://script.google.com/macros/s/AKfycbx3-d4LwAvGZFcyILBxxMLzRZ6s-4XFwvjSVzNewbWpkFuaT1-Q0SmbVZR7Wtv7gCE/exec"; 
+        
+        let availableVoices = [];
 
         function switchTab(tab) {
             document.getElementById('sectionResult').style.display = tab === 'result' ? 'block' : 'none';
             document.getElementById('sectionChat').style.display = tab === 'chat' ? 'block' : 'none';
             document.getElementById('tabResult').className = tab === 'result' ? 'tab-btn active' : 'tab-btn';
             document.getElementById('tabChat').className = tab === 'chat' ? 'tab-btn active' : 'tab-btn';
-            
-            if (typeof responsiveVoice !== 'undefined') {
-                responsiveVoice.cancel();
-            } else {
-                window.speechSynthesis.cancel(); 
-            }
+            window.speechSynthesis.cancel(); 
+            if(tab === 'chat') { loadVoices(); }
         }
 
-        // NAYA VIP VOICE SYSTEM - FORCED MALE VOICE (MARD)
-        function aiSpeak(text) {
-            var cleanText = text.replace(/[*#_\[\]`]/g, ''); 
+        // Voice List Load Karne Ka Naya Code
+        function loadVoices() {
+            availableVoices = window.speechSynthesis.getVoices();
+            let voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
             
-            if (typeof responsiveVoice !== 'undefined') {
-                responsiveVoice.cancel();
-                // "Hindi Male" profile lagayi hai jo urdu bhi perfect bolta hai
-                responsiveVoice.speak(cleanText, "Hindi Male", {rate: 0.95, pitch: 1});
-            } else {
-                // Agar internet slow ho toh backup
-                window.speechSynthesis.cancel();
+            let maleFound = false;
+            
+            availableVoices.forEach((voice, index) => {
+                // Sirf Urdu aur Hindi awaazein dikhayega
+                if(voice.lang.includes('ur') || voice.lang.includes('hi')) {
+                    let option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = voice.name;
+                    
+                    // Automatically kisi mard (hic, cme, male, urm) ko pehle select karne ki koshish karega
+                    let vName = voice.name.toLowerCase();
+                    if(!maleFound && (vName.includes('male') || vName.includes('hic') || vName.includes('cme') || vName.includes('urm') || vName.includes('hid'))) {
+                        option.selected = true;
+                        maleFound = true;
+                    }
+                    voiceSelect.appendChild(option);
+                }
+            });
+            
+            if(voiceSelect.options.length === 0) {
+                voiceSelect.innerHTML = '<option value="">Awaaz nahi mili</option>';
+            }
+        }
+        
+        // Jab browser awaazein dhoondh le, toh list update kare
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+
+        // Custom Voice Play Code
+        function aiSpeak(text) {
+            window.speechSynthesis.cancel(); 
+            if ('speechSynthesis' in window) {
+                var cleanText = text.replace(/[*#_\[\]`]/g, ''); 
                 var msg = new SpeechSynthesisUtterance(cleanText);
-                msg.lang = 'hi-IN';
+                
+                let voiceSelect = document.getElementById('voiceSelect');
+                let selectedVoiceIndex = voiceSelect.value;
+                
+                if(selectedVoiceIndex !== "") {
+                    msg.voice = availableVoices[selectedVoiceIndex];
+                } else {
+                    msg.lang = 'ur-PK';
+                }
+                
                 window.speechSynthesis.speak(msg);
             }
         }
 
         function startMic(inputId) {
-            if (typeof responsiveVoice !== 'undefined') responsiveVoice.cancel();
             window.speechSynthesis.cancel(); 
-            
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 const recognition = new SpeechRecognition();
                 recognition.lang = 'ur-PK'; 
-                
                 recognition.start();
 
                 recognition.onresult = function(event) {
