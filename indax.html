@@ -27,7 +27,6 @@
         
         #errorMsg { color: red; text-align: center; font-weight: bold; margin-top: 15px; }
         
-        /* Result Card Styles */
         #resultCard { display: none; margin-top: 30px; border: 2px solid #1a5d2e; border-radius: 8px; overflow: hidden; }
         .card-header { background-color: #1a5d2e; color: white; text-align: center; padding: 15px; font-weight: bold; font-size: 18px; }
         .student-info { padding: 15px; background: #e8f5e9; display: flex; align-items: center; gap: 15px; }
@@ -37,7 +36,6 @@
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background-color: #1a5d2e; color: white; }
         
-        /* Chat UI */
         .chat-box { background: #fdfbf7; padding: 15px; border-radius: 8px; margin-top: 15px; min-height: 100px; border: 2px solid #1a5d2e; }
         .ai-reply { font-size: 16px; color: #1a5d2e; line-height: 1.6; white-space: pre-wrap; font-family: Georgia, serif; }
         .urdu-text { font-size: 20px; color: #1a5d2e; text-align: center; font-weight: bold; margin-bottom: 10px; }
@@ -51,17 +49,15 @@
     </div>
 
     <div class="container">
-        
         <div class="tab-buttons">
             <button class="tab-btn active" id="tabResult" onclick="switchTab('result')">📝 Result</button>
             <button class="tab-btn" id="tabChat" onclick="switchTab('chat')">🕌 Mufti Sahab (AI)</button>
         </div>
 
-        <!-- RESULT SECTION -->
         <div id="sectionResult">
             <h3>Check Your Result</h3>
             <label>Select Month (Mahina):</label>
-                        <select id="searchMonth" required>
+            <select id="searchMonth" required>
                 <option value="">Select Month (Mahina)</option>
                 <option value="January">January</option>
                 <option value="February">February</option>
@@ -75,8 +71,7 @@
                 <option value="October">October</option>
                 <option value="November">November</option>
                 <option value="December">December</option>
-                        </select>
-            
+            </select>
 
             <label>Dakhila Number (Roll No):</label>
             <div class="input-group">
@@ -105,7 +100,6 @@
             </div>
         </div>
 
-        <!-- AI CHAT SECTION (MUFTI SAHAB) -->
         <div id="sectionChat" style="display: none;">
             <div class="urdu-text">صلّو علی الحبیب! صلی اللہ تعالٰی علٰی محمد</div>
             <h3 style="margin-top:0;">AI Mufti Sahab Se Masla Poochiye</h3>
@@ -114,7 +108,6 @@
                 <textarea id="aiQuestion" rows="3" placeholder="Sawal type karein ya mic dabayein..."></textarea>
                 <button type="button" class="btn-mic" onclick="startMic('aiQuestion')" style="height: 100%; background-color:#1a5d2e;">🎤</button>
             </div>
-            
             <button class="btn-action" id="askBtn" onclick="askAI()">Sawal Bhejein</button>
             
             <div class="chat-box" id="chatResponseBox" style="display:none;">
@@ -126,7 +119,7 @@
     </div>
 
     <script>
-        // YAHAN APNA NAYA DEPLOY URL DAALEIN!!!
+        // Aapka naya API link yahan laga diya gaya hai
         const API_URL = "https://script.google.com/macros/s/AKfycbx3-d4LwAvGZFcyILBxxMLzRZ6s-4XFwvjSVzNewbWpkFuaT1-Q0SmbVZR7Wtv7gCE/exec"; 
 
         function switchTab(tab) {
@@ -137,32 +130,32 @@
             window.speechSynthesis.cancel(); 
         }
 
-        // Voice Engine: Awaaz ko Bhari (Heavy) aur Aalim jaisa banaya gaya hai
+        // Voice Engine 
         function aiSpeak(text) {
             window.speechSynthesis.cancel(); 
             if ('speechSynthesis' in window) {
-                // Formatting marks bilkul saaf kar diye taaki atke nahi
                 var cleanText = text.replace(/[*#_\[\]`]/g, ''); 
-                
                 var msg = new SpeechSynthesisUtterance(cleanText);
+                
                 msg.lang = 'hi-IN'; 
-                msg.rate = 0.85; // Speed thodi kam (Thahrao aur Adab ke liye)
-                msg.pitch = 0.6; // Pitch low ki gayi hai taaki Mard ki bhari awaaz lage
+                msg.rate = 0.85; // Dhimi awaaz
+                msg.pitch = 0.1; // Bhari mardana awaaz
                 
                 var voices = window.speechSynthesis.getVoices();
                 var maleVoice = null;
                 
-                // Mard ki awaaz dhoondhne ki poori koshish
                 for (var i = 0; i < voices.length; i++) {
                     var v = voices[i];
-                    if ((v.lang.includes('hi') || v.lang.includes('ur')) && 
-                        (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('b') || v.name.toLowerCase().includes('c') || v.name.toLowerCase().includes('rishabh'))) {
-                        maleVoice = v;
-                        break;
+                    var vName = v.name.toLowerCase();
+                    if (v.lang.includes('hi') || v.lang.includes('ur')) {
+                        if (vName.includes('male') || vName.includes('hic') || vName.includes('hid') || vName.includes('hie')) {
+                            maleVoice = v;
+                            break;
+                        }
                     }
                 }
                 
-                if(maleVoice) {
+                if (maleVoice) {
                     msg.voice = maleVoice;
                 }
                 
@@ -172,17 +165,14 @@
         
         window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
 
+        // Theek kiya hua Mic function (Ab Echo nahi hoga)
         function startMic(inputId) {
+            window.speechSynthesis.cancel(); // Mic shuru hote hi AI chup ho jayega
+            
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 const recognition = new SpeechRecognition();
-                recognition.lang = 'ur-IN'; 
-                
-                if(inputId === 'aiQuestion') {
-                    aiSpeak("Ji Huzoor, apna masla irshad farmayein.");
-                } else {
-                    aiSpeak("Beta, apna Dakhila number bolein.");
-                }
+                recognition.lang = 'ur-PK'; // Urdu theek se samajhne ke liye
                 
                 recognition.start();
 
