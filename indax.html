@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Portal & AI Mufti - Markazi Jamiatul Madina</title>
+    <title>Student Portal - Markazi Jamiatul Madina</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
         .header { background-color: #1a5d2e; color: white; text-align: center; padding: 20px 10px; }
@@ -16,8 +16,6 @@
         h3 { text-align: center; color: #1a5d2e; margin-bottom: 20px; }
         label { font-weight: bold; color: #444; font-size: 14px; display: block; margin-top: 15px; }
         select, input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
-        .input-group { display: flex; gap: 10px; align-items: center; }
-        .btn-mic { background-color: #ff9800; color: white; border: none; padding: 12px; margin-top: 5px; border-radius: 5px; cursor: pointer; font-size: 18px; width: 50px; }
         .btn-action { background-color: #1a5d2e; color: white; width: 100%; padding: 15px; margin-top: 20px; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .btn-action:disabled { background-color: #888; }
         #errorMsg { color: red; text-align: center; font-weight: bold; margin-top: 15px; }
@@ -42,7 +40,7 @@
     <div class="container">
         <div class="tab-buttons">
             <button class="tab-btn active" id="tabResult" onclick="switchTab('result')">📝 Result</button>
-            <button class="tab-btn" id="tabChat" onclick="switchTab('chat')">🕌 Mufti Sahab (AI)</button>
+            <button class="tab-btn" id="tabChat" onclick="switchTab('chat')">🕌 Sawal O Jawab</button>
         </div>
 
         <!-- RESULT SECTION -->
@@ -66,10 +64,7 @@
             </select>
 
             <label>Dakhila Number (Roll No):</label>
-            <div class="input-group">
-                <input type="text" id="searchDakhila" placeholder="Dakhila No. type karein">
-                <button type="button" class="btn-mic" onclick="startMic('searchDakhila')" title="Mic se bolein">🎤</button>
-            </div>
+            <input type="text" id="searchDakhila" placeholder="Dakhila No. type karein">
 
             <button class="btn-action" id="searchBtn" onclick="fetchResult()">Get Result</button>
             <p id="errorMsg"></p>
@@ -92,28 +87,25 @@
             </div>
         </div>
 
-        <!-- CHAT SECTION -->
+        <!-- SAWAL O JAWAB SECTION -->
         <div id="sectionChat" style="display: none;">
             <div class="urdu-text">صلّو علی الحبیب! صلی اللہ تعالٰی علٰی محمد</div>
             
-            <h3 style="margin-top:10px;">AI Mufti Sahab Se Masla Poochiye</h3>
-            <label>Apna Masla ya Sawal mic par bolein:</label>
-            <div class="input-group">
-                <textarea id="aiQuestion" rows="3" placeholder="Sawal type karein ya mic dabayein..."></textarea>
-                <button type="button" class="btn-mic" onclick="startMic('aiQuestion')" style="height: 100%; background-color:#1a5d2e;">🎤</button>
-            </div>
+            <h3 style="margin-top:10px;">Deeni Masail - Sawal O Jawab</h3>
+            <label>Apna Masla ya Sawal type karein:</label>
+            <textarea id="aiQuestion" rows="4" placeholder="Sawal yahan likhein..."></textarea>
+            
             <button class="btn-action" id="askBtn" onclick="askAI()">Sawal Bhejein</button>
             
             <div class="chat-box" id="chatResponseBox" style="display:none;">
                 <b>🕌 AI Mufti Sahab:</b>
                 <p class="ai-reply" id="aiReplyText"></p>
-                <button type="button" class="btn-mic" style="margin: 0; width: 100%; font-size: 16px; padding: 10px; background: #1a5d2e; border-radius: 5px;" onclick="aiSpeak(document.getElementById('aiReplyText').innerText)">🔊 Jawab Awaaz Mein Sunein</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Aapka Google Sheet ka API Link
+        // Aapka Google Sheet ka API Link (Fix hai)
         const API_URL = "https://script.google.com/macros/s/AKfycbx3-d4LwAvGZFcyILBxxMLzRZ6s-4XFwvjSVzNewbWpkFuaT1-Q0SmbVZR7Wtv7gCE/exec"; 
 
         function switchTab(tab) {
@@ -123,54 +115,6 @@
             document.getElementById('tabChat').className = tab === 'chat' ? 'tab-btn active' : 'tab-btn';
         }
 
-        // ==========================================
-        // VIP ELEVENLABS VOICE ENGINE (RUDRA LAGA DIYA HAI)
-        // ==========================================
-        function aiSpeak(text) {
-            var cleanText = text.replace(/[*#_\[\]`]/g, ''); 
-            
-            // Aapki Private API Key yahan fit ho chuki hai
-            var VIP_VOICE_KEY = "sk_e6f9eb4c46884830efbdc57c4ece27c3993f3204d4a8c69f"; 
-            
-            // Rudra ka Voice ID yahan fit ho chuka hai
-            var voiceId = "vIdhHAZdn1bGjKe1dFw8";
-
-            var url = "https://api.elevenlabs.io/v1/text-to-speech/" + voiceId;
-            var data = {
-                text: cleanText,
-                model_id: "eleven_multilingual_v2",
-                voice_settings: { stability: 0.5, similarity_boost: 0.7 }
-            };
-
-            fetch(url, {
-                method: 'POST',
-                headers: { 'xi-api-key': VIP_VOICE_KEY, 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.blob())
-            .then(blob => {
-                var audioUrl = window.URL.createObjectURL(blob);
-                var audio = new Audio(audioUrl);
-                audio.play();
-            })
-            .catch(err => { console.log("Awaaz ka Masla: ", err); });
-        }
-
-        function startMic(inputId) {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                const recognition = new SpeechRecognition();
-                recognition.lang = 'ur-PK'; 
-                recognition.start();
-
-                recognition.onresult = function(event) {
-                    let spokenText = event.results[0][0].transcript;
-                    if(inputId === 'searchDakhila') spokenText = spokenText.replace(/\s+/g, '');
-                    document.getElementById(inputId).value = spokenText;
-                };
-            } else { alert("Aapka browser Mic support nahi karta."); }
-        }
-
         function fetchResult() {
             const month = document.getElementById('searchMonth').value;
             const dakhila = document.getElementById('searchDakhila').value.trim();
@@ -178,6 +122,7 @@
             
             if(!dakhila) { errorMsg.innerText = "Please Dakhila Number daalein."; return; }
             errorMsg.innerText = "🔍 Result dhoondh raha hai...";
+            document.getElementById('resultCard').style.display = "none";
             
             fetch(API_URL)
             .then(res => res.json())
@@ -187,13 +132,11 @@
                     if(student) {
                         errorMsg.innerText = "";
                         showResult(student);
-                        aiSpeak(`Masha Allah Ji Huzoor! Aapka result mil gaya hai. Allah mazeed taraqqi ata farmaye.`);
                     } else {
-                        errorMsg.innerText = `Result not found.`;
-                        aiSpeak("Assalam o Alaikum! Beta, is mahine ka result abhi nahi mila.");
+                        errorMsg.innerText = `Bhai, is mahine ka result nahi mila.`;
                     }
                 }
-            }).catch(e => { errorMsg.innerText = "Internet Error"; });
+            }).catch(e => { errorMsg.innerText = "Internet ka masla hai, dobara koshish karein."; });
         }
 
         function showResult(data) {
@@ -227,8 +170,8 @@
             document.getElementById('chatResponseBox').style.display = 'block';
             
             btn.disabled = true;
-            btn.innerText = "⏳ Mufti Sahab soch rahe hain...";
-            replyText.innerText = "Beta, thoda intezar karein. Darood e paak padhte rahiye...";
+            btn.innerText = "⏳ Jawab aa raha hai...";
+            replyText.innerText = "Thoda intezar karein. Darood e paak padhte rahiye...";
 
             fetch(API_URL, {
                 method: 'POST',
@@ -241,15 +184,14 @@
                 btn.innerText = "Sawal Bhejein";
                 if(data.reply) {
                     replyText.innerText = data.reply;
-                    aiSpeak(data.reply);
                 } else {
-                    replyText.innerText = "Beta, dhoondhne mein masla hua.";
+                    replyText.innerText = "Jawab dhoondhne mein masla hua.";
                 }
             })
             .catch(err => {
                 btn.disabled = false;
                 btn.innerText = "Sawal Bhejein";
-                replyText.innerText = "Internet ka masla hai. صلّو علی الحبیب!";
+                replyText.innerText = "Internet ka masla hai. Dobara koshish karein.";
             });
         }
     </script>
