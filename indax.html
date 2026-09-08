@@ -1,96 +1,274 @@
-// YAHAN APNI FREE GEMINI API KEY DALNA ZAROORI HAI 
-const GEMINI_API_KEY = "YAHAN_APNI_API_KEY_DAALEIN"; 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal & AI Mufti - Markazi Jamiatul Madina</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .header { background-color: #1a5d2e; color: white; text-align: center; padding: 20px 10px; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .header p { margin: 5px 0 0 0; font-size: 14px; opacity: 0.9; }
+        
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 12px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; background: #e0e0e0; color: #333; }
+        .tab-btn.active { background: #1a5d2e; color: white; }
 
-function askGemini(promptText) {
-  if(!GEMINI_API_KEY || GEMINI_API_KEY === "YAHAN_APNI_API_KEY_DAALEIN") {
-    return "Assalam o Alaikum! Beta, mere dimaag ki chabi (API Key) abhi nahi lagi hai. Master sahab se kahiye wo code mein key lagayein. Darood e paak padhte rahiye.";
-  }
-  
-  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY;
-  
-  // AI ko Mufti Sahab banane ki Hidayat (Prompt)
-  var systemPrompt = `Aap ek bohot aalim-e-deen, Mufti aur shafiq Ustad hain jo 'Markazi Jamiatul Madina' ke Hifz aur Aalim course ke bacchon ko padhate hain. 
-  Aapko in baaton ka sakhti se khayal rakhna hai:
-  1. Har baat ka aaghaz "Assalam o Alaikum wa Rahmatullah!" se karein.
-  2. Bacchon se bohot adab se baat karein, unhe "Ji Huzoor", "Beta", "Pyare bacche" kahein.
-  3. Baar baar baat ke beech mein "صلّو علی الحبیب! صلی اللہ تعالٰی علٰی محمد" kahein.
-  4. Bacchon ko ruk ruk kar yaad dilayein: "Beta, Darood e paak padhte raho".
-  5. Koi Fatwa ya Masla pooche toh uska jawab Sunni Hanafi tarike se bohot asaan aur wazeh andaz mein dein, jaise ek Mufti deta hai.
-  6. Bacchon ko naye Zikr o Azkar aur sunnatein sikhayein taaki wo baar baar aayen.
-  7. Jawab mukammal taur par asaan Roman Urdu mein ho (Arbi ke ilawa).
-  8. SAKHT ORDER: Likhawat mein KABHI BHI star (*), hash (#), ya koi formatting symbol istemal na karein. Bilkul saaf Plain Text likhein taaki padhne mein masla na ho.`;
+        h3 { text-align: center; color: #1a5d2e; margin-bottom: 20px; }
+        label { font-weight: bold; color: #444; font-size: 14px; display: block; margin-top: 15px; }
+        select, input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        
+        .input-group { display: flex; gap: 10px; align-items: center; }
+        .btn-mic { background-color: #ff9800; color: white; border: none; padding: 12px; margin-top: 5px; border-radius: 5px; cursor: pointer; font-size: 18px; width: 50px; }
+        .btn-action { background-color: #1a5d2e; color: white; width: 100%; padding: 15px; margin-top: 20px; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .btn-action:disabled { background-color: #888; }
+        
+        #errorMsg { color: red; text-align: center; font-weight: bold; margin-top: 15px; }
+        
+        /* Result Card Styles */
+        #resultCard { display: none; margin-top: 30px; border: 2px solid #1a5d2e; border-radius: 8px; overflow: hidden; }
+        .card-header { background-color: #1a5d2e; color: white; text-align: center; padding: 15px; font-weight: bold; font-size: 18px; }
+        .student-info { padding: 15px; background: #e8f5e9; display: flex; align-items: center; gap: 15px; }
+        .student-photo { width: 80px; height: 100px; border-radius: 5px; border: 2px solid #1a5d2e; object-fit: cover; }
+        .info-text p { margin: 5px 0; font-size: 15px; color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #1a5d2e; color: white; }
+        
+        /* Chat UI */
+        .chat-box { background: #fdfbf7; padding: 15px; border-radius: 8px; margin-top: 15px; min-height: 100px; border: 2px solid #1a5d2e; }
+        .ai-reply { font-size: 16px; color: #1a5d2e; line-height: 1.6; white-space: pre-wrap; font-family: Georgia, serif; }
+        .urdu-text { font-size: 20px; color: #1a5d2e; text-align: center; font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
 
-  var payload = {
-    "contents": [{"parts":[{"text": systemPrompt + " \n\nBacche ka sawal: " + promptText}]}]
-  };
-  
-  var options = {
-    "method": "post",
-    "contentType": "application/json",
-    "payload": JSON.stringify(payload),
-    "muteHttpExceptions": true
-  };
-  
-  try {
-    var response = UrlFetchApp.fetch(url, options);
-    var json = JSON.parse(response.getContentText());
-    if(json.candidates && json.candidates[0] && json.candidates[0].content) {
-      return json.candidates[0].content.parts[0].text.trim();
-    }
-    return "Maaf karna beta, mujhe samajh nahi aaya. صلّو علی الحبیب!";
-  } catch(e) {
-    return "Mujhe jawab dhoondhne mein masla ho raha hai beta. Darood e paak padhte raho.";
-  }
-}
+    <div class="header">
+        <h1>Markazi Jamiatul Madina</h1>
+        <p>Student Result & Deeni Rehnumai Portal</p>
+    </div>
 
-function doPost(e) {
-  try {
-    var params = JSON.parse(e.postData.contents);
+    <div class="container">
+        
+        <div class="tab-buttons">
+            <button class="tab-btn active" id="tabResult" onclick="switchTab('result')">📝 Result</button>
+            <button class="tab-btn" id="tabChat" onclick="switchTab('chat')">🕌 Mufti Sahab (AI)</button>
+        </div>
 
-    // AI Chat/Sawal Jawab
-    if (params.action === "chat") {
-      var ans = askGemini(params.message);
-      return ContentService.createTextOutput(JSON.stringify({ "status": "success", "reply": ans }))
-                           .setMimeType(ContentService.MimeType.JSON);
-    }
+        <!-- RESULT SECTION -->
+        <div id="sectionResult">
+            <h3>Check Your Result</h3>
+            <label>Select Month (Mahina):</label>
+            <select id="searchMonth" required>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </select>
 
-    // Normal Result Save Data
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var rowData = [];
-    if (sheet.getLastRow() === 0) {
-      var newHeaders = Object.keys(params);
-      sheet.appendRow(newHeaders);
-    }
-    var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-    for (var i = 0; i < headers.length; i++) {
-      var header = headers[i];
-      rowData.push(params[header] === undefined ? "" : params[header]);
-    }
-    sheet.appendRow(rowData);
-    
-    return ContentService.createTextOutput(JSON.stringify({ "status": "success", "message": "Result saved" }))
-                         .setMimeType(ContentService.MimeType.JSON);
-  } catch(error) {
-    return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": error.toString() }))
-                         .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+            <label>Dakhila Number (Roll No):</label>
+            <div class="input-group">
+                <input type="text" id="searchDakhila" placeholder="Dakhila No. type karein">
+                <button type="button" class="btn-mic" onclick="startMic('searchDakhila')" title="Mic se bolein">🎤</button>
+            </div>
 
-function doGet(e) {
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var data = sheet.getDataRange().getValues();
-    if(data.length <= 1) return ContentService.createTextOutput(JSON.stringify({ "status": "success", "data": [] })).setMimeType(ContentService.MimeType.JSON);
-    var headers = data[0];
-    var results = [];
-    for (var i = 1; i < data.length; i++) {
-      var row = data[i];
-      var record = {};
-      for (var j = 0; j < headers.length; j++) { record[headers[j]] = row[j]; }
-      results.push(record);
-    }
-    return ContentService.createTextOutput(JSON.stringify({ "status": "success", "data": results })).setMimeType(ContentService.MimeType.JSON);
-  } catch(error) {
-    return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": error.toString() })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
+            <button class="btn-action" id="searchBtn" onclick="fetchResult()">Get Result</button>
+            <p id="errorMsg"></p>
+
+            <div id="resultCard">
+                <div class="card-header">Monthly Test Result - <span id="resMonth"></span></div>
+                <div class="student-info">
+                    <img id="resPhoto" class="student-photo" src="https://via.placeholder.com/80x100?text=No+Photo" alt="Photo">
+                    <div class="info-text">
+                        <p><b>Name:</b> <span id="resName"></span></p>
+                        <p><b>Dakhila No:</b> <span id="resDakhila"></span></p>
+                        <p><b>Class:</b> <span id="resClass"></span></p>
+                    </div>
+                </div>
+                <table>
+                    <thead><tr><th>Subject</th><th>Max</th><th>Pass</th><th>Obtained</th></tr></thead>
+                    <tbody id="marksTableBody"></tbody>
+                </table>
+                <div style="padding: 15px; background: #fff3cd; text-align: center; font-weight: bold; color: #856404;" id="resTotal"></div>
+            </div>
+        </div>
+
+        <!-- AI CHAT SECTION (MUFTI SAHAB) -->
+        <div id="sectionChat" style="display: none;">
+            <div class="urdu-text">صلّو علی الحبیب! صلی اللہ تعالٰی علٰی محمد</div>
+            <h3 style="margin-top:0;">AI Mufti Sahab Se Masla Poochiye</h3>
+            <label>Apna Masla ya Sawal mic par bolein:</label>
+            <div class="input-group">
+                <textarea id="aiQuestion" rows="3" placeholder="Sawal type karein ya mic dabayein..."></textarea>
+                <button type="button" class="btn-mic" onclick="startMic('aiQuestion')" style="height: 100%; background-color:#1a5d2e;">🎤</button>
+            </div>
+            
+            <button class="btn-action" id="askBtn" onclick="askAI()">Sawal Bhejein</button>
+            
+            <div class="chat-box" id="chatResponseBox" style="display:none;">
+                <b>🕌 AI Mufti Sahab:</b>
+                <p class="ai-reply" id="aiReplyText"></p>
+                <button type="button" class="btn-mic" style="margin: 0; width: 100%; font-size: 16px; padding: 10px; background: #1a5d2e; border-radius: 5px;" onclick="aiSpeak(document.getElementById('aiReplyText').innerText)">🔊 Jawab Awaaz Mein Sunein</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // YAHAN APNA NAYA DEPLOY URL DAALEIN!!!
+        const API_URL = "https://script.google.com/macros/s/AKfycbx3-d4LwAvGZFcyILBxxMLzRZ6s-4XFwvjSVzNewbWpkFuaT1-Q0SmbVZR7Wtv7gCE/exec"; 
+
+        function switchTab(tab) {
+            document.getElementById('sectionResult').style.display = tab === 'result' ? 'block' : 'none';
+            document.getElementById('sectionChat').style.display = tab === 'chat' ? 'block' : 'none';
+            document.getElementById('tabResult').className = tab === 'result' ? 'tab-btn active' : 'tab-btn';
+            document.getElementById('tabChat').className = tab === 'chat' ? 'tab-btn active' : 'tab-btn';
+            window.speechSynthesis.cancel(); 
+        }
+
+        // Voice Engine: Awaaz ko Bhari (Heavy) aur Aalim jaisa banaya gaya hai
+        function aiSpeak(text) {
+            window.speechSynthesis.cancel(); 
+            if ('speechSynthesis' in window) {
+                // Formatting marks bilkul saaf kar diye taaki atke nahi
+                var cleanText = text.replace(/[*#_\[\]`]/g, ''); 
+                
+                var msg = new SpeechSynthesisUtterance(cleanText);
+                msg.lang = 'hi-IN'; 
+                msg.rate = 0.85; // Speed thodi kam (Thahrao aur Adab ke liye)
+                msg.pitch = 0.6; // Pitch low ki gayi hai taaki Mard ki bhari awaaz lage
+                
+                var voices = window.speechSynthesis.getVoices();
+                var maleVoice = null;
+                
+                // Mard ki awaaz dhoondhne ki poori koshish
+                for (var i = 0; i < voices.length; i++) {
+                    var v = voices[i];
+                    if ((v.lang.includes('hi') || v.lang.includes('ur')) && 
+                        (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('b') || v.name.toLowerCase().includes('c') || v.name.toLowerCase().includes('rishabh'))) {
+                        maleVoice = v;
+                        break;
+                    }
+                }
+                
+                if(maleVoice) {
+                    msg.voice = maleVoice;
+                }
+                
+                window.speechSynthesis.speak(msg);
+            }
+        }
+        
+        window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+
+        function startMic(inputId) {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'ur-IN'; 
+                
+                if(inputId === 'aiQuestion') {
+                    aiSpeak("Ji Huzoor, apna masla irshad farmayein.");
+                } else {
+                    aiSpeak("Beta, apna Dakhila number bolein.");
+                }
+                
+                recognition.start();
+
+                recognition.onresult = function(event) {
+                    let spokenText = event.results[0][0].transcript;
+                    if(inputId === 'searchDakhila') spokenText = spokenText.replace(/\s+/g, '');
+                    document.getElementById(inputId).value = spokenText;
+                };
+            } else {
+                alert("Aapka browser Mic support nahi karta.");
+            }
+        }
+
+        // Result Code
+        function fetchResult() {
+            const month = document.getElementById('searchMonth').value;
+            const dakhila = document.getElementById('searchDakhila').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if(!dakhila) { errorMsg.innerText = "Please Dakhila Number daalein."; return; }
+            errorMsg.innerText = "🔍 Result dhoondh raha hai...";
+            
+            fetch(API_URL)
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success") {
+                    const student = data.data.find(s => s.Dakhila == dakhila && s.Month == month);
+                    if(student) {
+                        errorMsg.innerText = "";
+                        showResult(student);
+                        aiSpeak(`Masha Allah Ji Huzoor! Aapka result mil gaya hai. Allah mazeed taraqqi ata farmaye.`);
+                    } else {
+                        errorMsg.innerText = `Result not found.`;
+                        aiSpeak("Assalam o Alaikum! Beta, is mahine ka result abhi nahi mila.");
+                    }
+                }
+            }).catch(e => { errorMsg.innerText = "Internet Error"; });
+        }
+
+        function showResult(data) {
+            document.getElementById('resMonth').innerText = data.Month;
+            document.getElementById('resName').innerText = data.Name;
+            document.getElementById('resDakhila').innerText = data.Dakhila;
+            document.getElementById('resClass').innerText = data.Class;
+            document.getElementById('resPhoto').src = data.Photo || "https://via.placeholder.com/80x100?text=No+Photo";
+            
+            const tbody = document.getElementById('marksTableBody');
+            tbody.innerHTML = "";
+            let totalMax = 0, totalObt = 0;
+            let subjects = JSON.parse(data.Subjects || "[]");
+
+            subjects.forEach(sub => {
+                totalMax += parseInt(sub.max) || 0;
+                totalObt += parseInt(sub.obt) || 0;
+                const isFail = parseInt(sub.obt) < parseInt(sub.pass);
+                tbody.innerHTML += `<tr><td>${sub.name}</td><td>${sub.max}</td><td>${sub.pass}</td><td style="${isFail ? 'color:red;font-weight:bold;' : ''}">${sub.obt}</td></tr>`;
+            });
+            document.getElementById('resTotal').innerHTML = `Total Marks: ${totalObt} / ${totalMax} <br> Percentage: ${((totalObt / totalMax) * 100).toFixed(2)}%`;
+            document.getElementById('resultCard').style.display = "block";
+        }
+
+        // AI Chat Code
+        function askAI() {
+            const question = document.getElementById('aiQuestion').value.trim();
+            if(!question) return;
+            
+            const btn = document.getElementById('askBtn');
+            const replyText = document.getElementById('aiReplyText');
+            document.getElementById('chatResponseBox').style.display = 'block';
+            
+            btn.disabled = true;
+            btn.innerText = "⏳ Mufti Sahab soch rahe hain...";
+            replyText.innerText = "Beta, thoda intezar karein. Darood e paak padhte rahiye...";
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: "chat", message: question })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerText = "Sawal Bhejein";
+                if(data.reply) {
+                    replyText.innerText = data.reply;
+                    aiSpeak(data.reply);
+                } else {
+                    replyText.innerText = "Beta, dhoondhne mein masla hua.";
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerText = "Sawal Bhejein";
+                replyText.innerText = "Internet ka masla hai. صلّو علی الحبیب!";
+            });
+        }
+    </script>
+</body>
+</html>
