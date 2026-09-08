@@ -9,24 +9,18 @@
         .header { background-color: #1a5d2e; color: white; text-align: center; padding: 20px 10px; }
         .header h1 { margin: 0; font-size: 24px; }
         .header p { margin: 5px 0 0 0; font-size: 14px; opacity: 0.9; }
-        
         .container { max-width: 600px; margin: 20px auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
         .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
         .tab-btn { flex: 1; padding: 12px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; background: #e0e0e0; color: #333; }
         .tab-btn.active { background: #1a5d2e; color: white; }
-
         h3 { text-align: center; color: #1a5d2e; margin-bottom: 20px; }
         label { font-weight: bold; color: #444; font-size: 14px; display: block; margin-top: 15px; }
         select, input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
-        
         .input-group { display: flex; gap: 10px; align-items: center; }
         .btn-mic { background-color: #ff9800; color: white; border: none; padding: 12px; margin-top: 5px; border-radius: 5px; cursor: pointer; font-size: 18px; width: 50px; }
         .btn-action { background-color: #1a5d2e; color: white; width: 100%; padding: 15px; margin-top: 20px; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .btn-action:disabled { background-color: #888; }
-        
         #errorMsg { color: red; text-align: center; font-weight: bold; margin-top: 15px; }
-        
         #resultCard { display: none; margin-top: 30px; border: 2px solid #1a5d2e; border-radius: 8px; overflow: hidden; }
         .card-header { background-color: #1a5d2e; color: white; text-align: center; padding: 15px; font-weight: bold; font-size: 18px; }
         .student-info { padding: 15px; background: #e8f5e9; display: flex; align-items: center; gap: 15px; }
@@ -35,25 +29,23 @@
         table { width: 100%; border-collapse: collapse; margin-top: 0; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background-color: #1a5d2e; color: white; }
-        
         .chat-box { background: #fdfbf7; padding: 15px; border-radius: 8px; margin-top: 15px; min-height: 100px; border: 2px solid #1a5d2e; }
         .ai-reply { font-size: 16px; color: #1a5d2e; line-height: 1.6; white-space: pre-wrap; font-family: Georgia, serif; }
         .urdu-text { font-size: 20px; color: #1a5d2e; text-align: center; font-weight: bold; margin-bottom: 10px; }
     </style>
 </head>
 <body>
-
     <div class="header">
         <h1>Markazi Jamiatul Madina</h1>
         <p>Student Result & Deeni Rehnumai Portal</p>
     </div>
-
     <div class="container">
         <div class="tab-buttons">
             <button class="tab-btn active" id="tabResult" onclick="switchTab('result')">📝 Result</button>
             <button class="tab-btn" id="tabChat" onclick="switchTab('chat')">🕌 Mufti Sahab (AI)</button>
         </div>
 
+        <!-- RESULT SECTION -->
         <div id="sectionResult">
             <h3>Check Your Result</h3>
             <label>Select Month (Mahina):</label>
@@ -100,6 +92,7 @@
             </div>
         </div>
 
+        <!-- CHAT SECTION -->
         <div id="sectionChat" style="display: none;">
             <div class="urdu-text">صلّو علی الحبیب! صلی اللہ تعالٰی علٰی محمد</div>
             <h3 style="margin-top:0;">AI Mufti Sahab Se Masla Poochiye</h3>
@@ -119,7 +112,7 @@
     </div>
 
     <script>
-        // Aapka naya API link yahan laga diya gaya hai
+        // Aapka Sheet Link
         const API_URL = "https://script.google.com/macros/s/AKfycbx3-d4LwAvGZFcyILBxxMLzRZ6s-4XFwvjSVzNewbWpkFuaT1-Q0SmbVZR7Wtv7gCE/exec"; 
 
         function switchTab(tab) {
@@ -130,9 +123,7 @@
             window.speechSynthesis.cancel(); 
         }
 
-        // Voice Engine 
-        function aiSpeak(text) {
-                // Natural Voice Engine - Target: "Adil" (Urdu Male Voice)
+        // Voice Engine: Adil (Male Voice)
         function aiSpeak(text) {
             window.speechSynthesis.cancel(); 
             if ('speechSynthesis' in window) {
@@ -140,8 +131,8 @@
                 var msg = new SpeechSynthesisUtterance(cleanText);
                 
                 msg.lang = 'ur-PK'; 
-                msg.rate = 1.0; // Normal natural speed
-                msg.pitch = 1.0; // Robot wali gandi awaaz hata di (Normal pitch)
+                msg.rate = 1.0; 
+                msg.pitch = 1.0; 
                 
                 var voices = window.speechSynthesis.getVoices();
                 var adilVoice = null;
@@ -174,16 +165,13 @@
         }
         
         window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
-                                                                      = function() { window.speechSynthesis.getVoices(); };
 
-        // Theek kiya hua Mic function (Ab Echo nahi hoga)
         function startMic(inputId) {
-            window.speechSynthesis.cancel(); // Mic shuru hote hi AI chup ho jayega
-            
+            window.speechSynthesis.cancel(); 
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 const recognition = new SpeechRecognition();
-                recognition.lang = 'ur-PK'; // Urdu theek se samajhne ke liye
+                recognition.lang = 'ur-PK'; 
                 
                 recognition.start();
 
@@ -197,7 +185,6 @@
             }
         }
 
-        // Result Code
         function fetchResult() {
             const month = document.getElementById('searchMonth').value;
             const dakhila = document.getElementById('searchDakhila').value.trim();
@@ -245,7 +232,6 @@
             document.getElementById('resultCard').style.display = "block";
         }
 
-        // AI Chat Code
         function askAI() {
             const question = document.getElementById('aiQuestion').value.trim();
             if(!question) return;
