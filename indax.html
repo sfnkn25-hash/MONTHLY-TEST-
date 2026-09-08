@@ -132,31 +132,41 @@
 
         // Voice Engine 
         function aiSpeak(text) {
+                // Natural Voice Engine - Target: "Adil" (Urdu Male Voice)
+        function aiSpeak(text) {
             window.speechSynthesis.cancel(); 
             if ('speechSynthesis' in window) {
                 var cleanText = text.replace(/[*#_\[\]`]/g, ''); 
                 var msg = new SpeechSynthesisUtterance(cleanText);
                 
-                msg.lang = 'hi-IN'; 
-                msg.rate = 0.85; // Dhimi awaaz
-                msg.pitch = 0.1; // Bhari mardana awaaz
+                msg.lang = 'ur-PK'; 
+                msg.rate = 1.0; // Normal natural speed
+                msg.pitch = 1.0; // Robot wali gandi awaaz hata di (Normal pitch)
                 
                 var voices = window.speechSynthesis.getVoices();
-                var maleVoice = null;
+                var adilVoice = null;
                 
                 for (var i = 0; i < voices.length; i++) {
-                    var v = voices[i];
-                    var vName = v.name.toLowerCase();
-                    if (v.lang.includes('hi') || v.lang.includes('ur')) {
-                        if (vName.includes('male') || vName.includes('hic') || vName.includes('hid') || vName.includes('hie')) {
-                            maleVoice = v;
+                    if (voices[i].name.toLowerCase().includes('adil')) {
+                        adilVoice = voices[i];
+                        break;
+                    }
+                }
+                
+                if (!adilVoice) {
+                    for (var i = 0; i < voices.length; i++) {
+                        var v = voices[i];
+                        var vName = v.name.toLowerCase();
+                        if ((v.lang.includes('ur') || v.lang.includes('hi')) && 
+                            (vName.includes('male') || vName.includes('man'))) {
+                            adilVoice = v;
                             break;
                         }
                     }
                 }
                 
-                if (maleVoice) {
-                    msg.voice = maleVoice;
+                if (adilVoice) {
+                    msg.voice = adilVoice;
                 }
                 
                 window.speechSynthesis.speak(msg);
@@ -164,6 +174,7 @@
         }
         
         window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+                                                                      = function() { window.speechSynthesis.getVoices(); };
 
         // Theek kiya hua Mic function (Ab Echo nahi hoga)
         function startMic(inputId) {
