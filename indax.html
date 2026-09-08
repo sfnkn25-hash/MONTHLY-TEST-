@@ -33,6 +33,9 @@
         .ai-reply { font-size: 16px; color: #1a5d2e; line-height: 1.6; white-space: pre-wrap; font-family: Georgia, serif; }
         .urdu-text { font-size: 20px; color: #1a5d2e; text-align: center; font-weight: bold; margin-bottom: 10px; }
     </style>
+    
+    <!-- YAHAN NAYA VIP VOICE ENGINE LAGAYA HAI -->
+    <script src="https://code.responsivevoice.org/responsivevoice/responsivevoice.js"></script>
 </head>
 <body>
     <div class="header">
@@ -50,7 +53,7 @@
             <h3>Check Your Result</h3>
             <label>Select Month (Mahina):</label>
             <select id="searchMonth" required>
-                <option value="">Select Month (Mahina)</option>
+                <option value="">Select Month</option>
                 <option value="January">January</option>
                 <option value="February">February</option>
                 <option value="March">March</option>
@@ -120,54 +123,35 @@
             document.getElementById('sectionChat').style.display = tab === 'chat' ? 'block' : 'none';
             document.getElementById('tabResult').className = tab === 'result' ? 'tab-btn active' : 'tab-btn';
             document.getElementById('tabChat').className = tab === 'chat' ? 'tab-btn active' : 'tab-btn';
-            window.speechSynthesis.cancel(); 
+            
+            if (typeof responsiveVoice !== 'undefined') {
+                responsiveVoice.cancel();
+            } else {
+                window.speechSynthesis.cancel(); 
+            }
         }
 
-        // Voice Engine: Adil (Male Voice)
+        // NAYA VIP VOICE SYSTEM - FORCED MALE VOICE (MARD)
         function aiSpeak(text) {
-            window.speechSynthesis.cancel(); 
-            if ('speechSynthesis' in window) {
-                var cleanText = text.replace(/[*#_\[\]`]/g, ''); 
+            var cleanText = text.replace(/[*#_\[\]`]/g, ''); 
+            
+            if (typeof responsiveVoice !== 'undefined') {
+                responsiveVoice.cancel();
+                // "Hindi Male" profile lagayi hai jo urdu bhi perfect bolta hai
+                responsiveVoice.speak(cleanText, "Hindi Male", {rate: 0.95, pitch: 1});
+            } else {
+                // Agar internet slow ho toh backup
+                window.speechSynthesis.cancel();
                 var msg = new SpeechSynthesisUtterance(cleanText);
-                
-                msg.lang = 'ur-PK'; 
-                msg.rate = 1.0; 
-                msg.pitch = 1.0; 
-                
-                var voices = window.speechSynthesis.getVoices();
-                var adilVoice = null;
-                
-                for (var i = 0; i < voices.length; i++) {
-                    if (voices[i].name.toLowerCase().includes('adil')) {
-                        adilVoice = voices[i];
-                        break;
-                    }
-                }
-                
-                if (!adilVoice) {
-                    for (var i = 0; i < voices.length; i++) {
-                        var v = voices[i];
-                        var vName = v.name.toLowerCase();
-                        if ((v.lang.includes('ur') || v.lang.includes('hi')) && 
-                            (vName.includes('male') || vName.includes('man'))) {
-                            adilVoice = v;
-                            break;
-                        }
-                    }
-                }
-                
-                if (adilVoice) {
-                    msg.voice = adilVoice;
-                }
-                
+                msg.lang = 'hi-IN';
                 window.speechSynthesis.speak(msg);
             }
         }
-        
-        window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
 
         function startMic(inputId) {
+            if (typeof responsiveVoice !== 'undefined') responsiveVoice.cancel();
             window.speechSynthesis.cancel(); 
+            
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 const recognition = new SpeechRecognition();
