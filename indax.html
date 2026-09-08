@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Portal - Markazi Jamiatul Madina</title>
+    <!-- Download ke liye library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
         .header { background-color: #1a5d2e; color: white; text-align: center; padding: 20px 10px; }
@@ -18,8 +20,9 @@
         select, input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
         .btn-action { background-color: #1a5d2e; color: white; width: 100%; padding: 15px; margin-top: 20px; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .btn-action:disabled { background-color: #888; }
+        .btn-download { background-color: #0d401d; margin-top: 15px; }
         #errorMsg { color: red; text-align: center; font-weight: bold; margin-top: 15px; }
-        #resultCard { display: none; margin-top: 30px; border: 2px solid #1a5d2e; border-radius: 8px; overflow: hidden; }
+        #resultCard { display: none; margin-top: 30px; border: 2px solid #1a5d2e; border-radius: 8px; overflow: hidden; background: white; }
         .card-header { background-color: #1a5d2e; color: white; text-align: center; padding: 15px; font-weight: bold; font-size: 18px; }
         .student-info { padding: 15px; background: #e8f5e9; display: flex; align-items: center; gap: 15px; }
         .student-photo { width: 80px; height: 100px; border-radius: 5px; border: 2px solid #1a5d2e; object-fit: cover; }
@@ -69,6 +72,7 @@
             <button class="btn-action" id="searchBtn" onclick="fetchResult()">Get Result</button>
             <p id="errorMsg"></p>
 
+            <!-- RESULT CARD -->
             <div id="resultCard">
                 <div class="card-header">Monthly Test Result - <span id="resMonth"></span></div>
                 <div class="student-info">
@@ -85,18 +89,18 @@
                 </table>
                 <div style="padding: 15px; background: #fff3cd; text-align: center; font-weight: bold; color: #856404;" id="resTotal"></div>
             </div>
+            
+            <!-- DOWNLOAD BUTTON -->
+            <button class="btn-action btn-download" id="downloadBtn" style="display: none;" onclick="downloadResult()">📥 Download Result</button>
         </div>
 
         <!-- SAWAL O JAWAB SECTION -->
         <div id="sectionChat" style="display: none;">
             <div class="urdu-text">صلّو علی الحبیب! صلی اللہ تعالٰی علٰی محمد</div>
-            
             <h3 style="margin-top:10px;">Deeni Masail - Sawal O Jawab</h3>
             <label>Apna Masla ya Sawal type karein:</label>
             <textarea id="aiQuestion" rows="4" placeholder="Sawal yahan likhein..."></textarea>
-            
             <button class="btn-action" id="askBtn" onclick="askAI()">Sawal Bhejein</button>
-            
             <div class="chat-box" id="chatResponseBox" style="display:none;">
                 <b>🕌 AI Mufti Sahab:</b>
                 <p class="ai-reply" id="aiReplyText"></p>
@@ -105,7 +109,6 @@
     </div>
 
     <script>
-        // Aapka Google Sheet ka API Link (Fix hai)
         const API_URL = "https://script.google.com/macros/s/AKfycbx3-d4LwAvGZFcyILBxxMLzRZ6s-4XFwvjSVzNewbWpkFuaT1-Q0SmbVZR7Wtv7gCE/exec"; 
 
         function switchTab(tab) {
@@ -123,6 +126,7 @@
             if(!dakhila) { errorMsg.innerText = "Please Dakhila Number daalein."; return; }
             errorMsg.innerText = "🔍 Result dhoondh raha hai...";
             document.getElementById('resultCard').style.display = "none";
+            document.getElementById('downloadBtn').style.display = "none";
             
             fetch(API_URL)
             .then(res => res.json())
@@ -159,6 +163,26 @@
             });
             document.getElementById('resTotal').innerHTML = `Total Marks: ${totalObt} / ${totalMax} <br> Percentage: ${((totalObt / totalMax) * 100).toFixed(2)}%`;
             document.getElementById('resultCard').style.display = "block";
+            
+            // Download button show karein
+            document.getElementById('downloadBtn').style.display = "block";
+        }
+
+        // RESULT DOWNLOAD KARNE KA FUNCTION
+        function downloadResult() {
+            const btn = document.getElementById('downloadBtn');
+            const resultCard = document.getElementById('resultCard');
+            const dakhilaNo = document.getElementById('resDakhila').innerText;
+            
+            btn.innerText = "⏳ Downloading...";
+            
+            html2canvas(resultCard, { scale: 2, useCORS: true }).then(canvas => {
+                let link = document.createElement('a');
+                link.download = 'Result_' + dakhilaNo + '.png';
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                btn.innerText = "📥 Download Result";
+            });
         }
 
         function askAI() {
