@@ -32,7 +32,6 @@
         .chat-box { background: #fdfbf7; padding: 15px; border-radius: 8px; margin-top: 15px; min-height: 100px; border: 2px solid #1a5d2e; }
         .ai-reply { font-size: 16px; color: #1a5d2e; line-height: 1.6; white-space: pre-wrap; font-family: Georgia, serif; }
         .urdu-text { font-size: 20px; color: #1a5d2e; text-align: center; font-weight: bold; margin-bottom: 10px; }
-        .voice-setting { background: #e8f5e9; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #1a5d2e; }
     </style>
 </head>
 <body>
@@ -97,13 +96,6 @@
         <div id="sectionChat" style="display: none;">
             <div class="urdu-text">صلّو علی الحبیب! صلی اللہ تعالٰی علٰی محمد</div>
             
-            <!-- NAYA VOICE SELECTOR -->
-            <div class="voice-setting">
-                <label style="margin-top: 0;">🔊 Awaaz (Voice) Chunein:</label>
-                <select id="voiceSelect" style="margin-top: 5px; font-weight:bold;"></select>
-                <p style="font-size:12px; color:#555; margin:5px 0 0 0;">Agar aurat ki awaaz aaye, toh yahan se dusra option chun kar test karein.</p>
-            </div>
-
             <h3 style="margin-top:10px;">AI Mufti Sahab Se Masla Poochiye</h3>
             <label>Apna Masla ya Sawal mic par bolein:</label>
             <div class="input-group">
@@ -121,75 +113,50 @@
     </div>
 
     <script>
-        // Aapka API URL 100% Sahi Hai
+        // Aapka Google Sheet ka API Link
         const API_URL = "https://script.google.com/macros/s/AKfycbx3-d4LwAvGZFcyILBxxMLzRZ6s-4XFwvjSVzNewbWpkFuaT1-Q0SmbVZR7Wtv7gCE/exec"; 
-        
-        let availableVoices = [];
 
         function switchTab(tab) {
             document.getElementById('sectionResult').style.display = tab === 'result' ? 'block' : 'none';
             document.getElementById('sectionChat').style.display = tab === 'chat' ? 'block' : 'none';
             document.getElementById('tabResult').className = tab === 'result' ? 'tab-btn active' : 'tab-btn';
             document.getElementById('tabChat').className = tab === 'chat' ? 'tab-btn active' : 'tab-btn';
-            window.speechSynthesis.cancel(); 
-            if(tab === 'chat') { loadVoices(); }
         }
 
-        // Voice List Load Karne Ka Naya Code
-        function loadVoices() {
-            availableVoices = window.speechSynthesis.getVoices();
-            let voiceSelect = document.getElementById('voiceSelect');
-            voiceSelect.innerHTML = '';
-            
-            let maleFound = false;
-            
-            availableVoices.forEach((voice, index) => {
-                // Sirf Urdu aur Hindi awaazein dikhayega
-                if(voice.lang.includes('ur') || voice.lang.includes('hi')) {
-                    let option = document.createElement('option');
-                    option.value = index;
-                    option.textContent = voice.name;
-                    
-                    // Automatically kisi mard (hic, cme, male, urm) ko pehle select karne ki koshish karega
-                    let vName = voice.name.toLowerCase();
-                    if(!maleFound && (vName.includes('male') || vName.includes('hic') || vName.includes('cme') || vName.includes('urm') || vName.includes('hid'))) {
-                        option.selected = true;
-                        maleFound = true;
-                    }
-                    voiceSelect.appendChild(option);
-                }
-            });
-            
-            if(voiceSelect.options.length === 0) {
-                voiceSelect.innerHTML = '<option value="">Awaaz nahi mili</option>';
-            }
-        }
-        
-        // Jab browser awaazein dhoondh le, toh list update kare
-        window.speechSynthesis.onvoiceschanged = loadVoices;
-
-        // Custom Voice Play Code
+        // ==========================================
+        // VIP ELEVENLABS VOICE ENGINE (RUDRA LAGA DIYA HAI)
+        // ==========================================
         function aiSpeak(text) {
-            window.speechSynthesis.cancel(); 
-            if ('speechSynthesis' in window) {
-                var cleanText = text.replace(/[*#_\[\]`]/g, ''); 
-                var msg = new SpeechSynthesisUtterance(cleanText);
-                
-                let voiceSelect = document.getElementById('voiceSelect');
-                let selectedVoiceIndex = voiceSelect.value;
-                
-                if(selectedVoiceIndex !== "") {
-                    msg.voice = availableVoices[selectedVoiceIndex];
-                } else {
-                    msg.lang = 'ur-PK';
-                }
-                
-                window.speechSynthesis.speak(msg);
-            }
+            var cleanText = text.replace(/[*#_\[\]`]/g, ''); 
+            
+            // Aapki Private API Key yahan fit ho chuki hai
+            var VIP_VOICE_KEY = "sk_e6f9eb4c46884830efbdc57c4ece27c3993f3204d4a8c69f"; 
+            
+            // Rudra ka Voice ID yahan fit ho chuka hai
+            var voiceId = "vIdhHAZdn1bGjKe1dFw8";
+
+            var url = "https://api.elevenlabs.io/v1/text-to-speech/" + voiceId;
+            var data = {
+                text: cleanText,
+                model_id: "eleven_multilingual_v2",
+                voice_settings: { stability: 0.5, similarity_boost: 0.7 }
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: { 'xi-api-key': VIP_VOICE_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                var audioUrl = window.URL.createObjectURL(blob);
+                var audio = new Audio(audioUrl);
+                audio.play();
+            })
+            .catch(err => { console.log("Awaaz ka Masla: ", err); });
         }
 
         function startMic(inputId) {
-            window.speechSynthesis.cancel(); 
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 const recognition = new SpeechRecognition();
@@ -201,9 +168,7 @@
                     if(inputId === 'searchDakhila') spokenText = spokenText.replace(/\s+/g, '');
                     document.getElementById(inputId).value = spokenText;
                 };
-            } else {
-                alert("Aapka browser Mic support nahi karta.");
-            }
+            } else { alert("Aapka browser Mic support nahi karta."); }
         }
 
         function fetchResult() {
