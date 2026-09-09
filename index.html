@@ -3,220 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Portal - Markazi Jamiatul Madina</title>
+    <title>Admin Panel - Markazi Jamiatul Madina</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f1; margin: 0; padding: 15px; }
-        .container { max-width: 650px; background: white; padding: 25px; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #1a5d2e; border-bottom: 3px solid #1a5d2e; padding-bottom: 10px; margin-top: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 15px; margin: 0; }
+        .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        .header { text-align: center; color: #1a5d2e; margin-bottom: 20px; border-bottom: 2px solid #1a5d2e; padding-bottom: 10px; }
+        label { font-weight: bold; color: #444; font-size: 14px; display: block; margin-top: 15px; }
+        input, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
         
-        /* Search Box Style */
-        .search-box { background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c8e6c9; }
-        .search-box h4 { margin: 0 0 10px 0; color: #2e7d32; font-size: 16px; }
-        .btn-search { background: #ff9800; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: bold; }
+        .box { border: 2px dashed #1a5d2e; padding: 15px; border-radius: 10px; margin-top: 20px; margin-bottom: 15px; background: #fdfbf7; }
+        .box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         
-        /* Form Style */
-        label { font-weight: bold; margin-top: 15px; display: block; color: #444; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 15px; }
-        input:focus, select:focus { border-color: #1a5d2e; outline: none; }
+        .subject-row { display: flex; gap: 5px; margin-bottom: 10px; }
+        .subject-row input { margin-top: 0; padding: 10px; font-size: 14px; text-align: center; }
+        .s-name { flex: 2; text-align: left !important; }
+        .s-max { flex: 1; }
+        .s-pass { flex: 1; }
+        .s-obt { flex: 1.5; border: 1px solid #1a5d2e !important; background: #e8f5e9; }
         
-        /* Books Section */
-        .books-container { margin-top: 20px; border: 2px dashed #1a5d2e; padding: 15px; border-radius: 8px; background: #fafafa; }
-        .book-row { display: flex; gap: 8px; margin-bottom: 10px; }
-        .book-row input { margin-top: 0; padding: 8px; }
-        .btn-add { background: #007bff; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 15px; display: inline-block; }
-        .btn-remove { background: #dc3545; color: white; border: none; padding: 0 12px; cursor: pointer; border-radius: 5px; font-weight: bold; }
-        
-        .btn-submit { background: #1a5d2e; color: white; width: 100%; padding: 15px; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; margin-top: 25px; font-weight: bold; }
-        .btn-submit:hover { background: #144923; }
-        .message { text-align: center; margin-top: 15px; font-weight: bold; font-size: 16px; }
+        .btn-blue { background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-red { background: #dc3545; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-green { background: #1a5d2e; color: white; border: none; padding: 15px; width: 100%; font-size: 18px; border-radius: 5px; cursor: pointer; margin-top: 15px; font-weight: bold; }
+        .btn-green:disabled { background: #888; }
+        #msg { text-align: center; font-weight: bold; margin-top: 15px; font-size: 16px; }
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h2>Admin Panel - Result Entry</h2>
+        </div>
 
-<div class="container">
-    <h2>Admin Portal - Result Entry</h2>
-
-    <!-- Naya Feature: Purana Result Check Karne Ka Section -->
-    <div class="search-box">
-        <h4>🔍 Pehle Se Uploaded Result Check Karein</h4>
-        <input type="text" id="searchDakhila" placeholder="Dakhila Number Daalein...">
-        <button type="button" class="btn-search" onclick="searchStudent()">Check Result Status</button>
-        <p id="searchMsg" style="font-size: 14px; margin-bottom: 0; margin-top: 10px; text-align: center;"></p>
-    </div>
-
-    <!-- Result Entry Form -->
-    <form id="adminForm">
-        <label>Select Month (Mahina):</label>
-                <select id="month" required>
-            <option value="">Select Month</option>
-            <option value="January">January</option>
-            <option value="February">February</option>
-            <option value="March">March</option>
-            <option value="April">April</option>
-            <option value="May">May</option>
-            <option value="June">June</option>
-            <option value="July">July</option>
+        <label>Mahina (Month):</label>
+        <select id="month">
             <option value="August">August</option>
             <option value="September">September</option>
             <option value="October">October</option>
-            <option value="November">November</option>
-            <option value="December">December</option>
         </select>
-            
+
+        <label>Class Ka Naam (Class Name):</label>
+        <input type="text" id="className" placeholder="Maslan: Rabia, Ula, Sania" onkeyup="loadClassTemplate()">
+        <small style="color: gray;">Class ka naam likhte hi purani kitabein auto-load ho jayengi.</small>
+
+        <label>Bacche Ka Naam (Student Name):</label>
+        <input type="text" id="studentName" placeholder="Naam likhein">
 
         <label>Dakhila Number (Roll No):</label>
-        <input type="text" id="dakhila" placeholder= required>
+        <input type="text" id="dakhila" placeholder="Maslan: 9119-003307">
 
-        <label>Student Name (Naam):</label>
-        <input type="text" id="name" placeholder="Bacche ka naam" required>
+        <label>Photo ka link (Optional):</label>
+        <input type="text" id="photo" placeholder="URL daalein">
 
-        <label>Class (Darja):</label>
-                <select id="class" required>
-            <option value="">Select Class (Darja)</option>
-            <option value="IBTIDAYA MADNI">IBTIDAYA MADNI</option>
-            <option value="IBTIDAYA MAKKI">IBTIDAYA MAKKI</option>
-            <option value="AWWAL">AWWAL</option>
-            <option value="DUWAM">DUWAM</option>
-            <option value="ULA">ULA</option>
-            <option value="SANIYA">SANIYA</option>
-            <option value="SALISA">SALISA</option>
-            <option value="RABIA">RABIA</option>
-                </select>
-        
-
-        <label>Student Photo URL (Link):</label>
-        <input type="url" id="photo" placeholder="Photo ka link daalein (Optional)">
-
-        <div class="books-container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <label style="margin-top: 0;">📚 Subject Marks (Kitabon ke Number)</label>
-                <button type="button" class="btn-add" onclick="addBook()">+ Add Book</button>
+        <div class="box">
+            <div class="box-header">
+                <b>📚 Subject Marks<br><small>(Kitabon ke Number)</small></b>
+                <button class="btn-blue" onclick="addSubjectRow()">+ Add Book</button>
             </div>
             
-            <div id="booksList">
-                <div class="book-row">
-                    <input type="text" class="b-name" placeholder="Book Name" required>
-                    <input type="number" class="b-max" placeholder="Max" value="100" required>
-                    <input type="number" class="b-pass" placeholder="Pass" value="40" required>
-                    <input type="number" class="b-obt" placeholder="Obtained" required>
-                    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">X</button>
-                </div>
+            <div style="display:flex; gap:5px; margin-bottom:5px; text-align:center; font-size:12px; font-weight:bold; color:#555;">
+                <div style="flex:2; text-align:left;">Book Name</div>
+                <div style="flex:1">Total</div>
+                <div style="flex:1">Pass</div>
+                <div style="flex:1.5; color:#1a5d2e;">Obtained</div>
+                <div style="width:35px;"></div>
+            </div>
+
+            <div id="subjectsBox">
+                <!-- Kitabon ki list yahan aayegi -->
             </div>
         </div>
 
-        <button type="submit" class="btn-submit" id="submitBtn">💾 Save Result to Internet</button>
-        <p id="msg" class="message"></p>
-    </form>
-</div>
+        <button class="btn-green" id="saveBtn" onclick="saveResult()">💾 Save Result to Internet</button>
+        <p id="msg"></p>
+    </div>
 
-<script>
-    // Yahan hum baad mein apni Google Sheet ka lamba link dalenge
-    const API_URL = "https://script.google.com/macros/s/AKfycbx3-d4LwAvGZFcyILBxxMLzRZ6s-4XFwvjSVzNewbWpkFuaT1-Q0SmbVZR7Wtv7gCE/exec"; 
+    <script>
+        // ==========================================
+        // YAHAN APNA APPS SCRIPT KA URL DAALEIN
+        // ==========================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbx3-d4LwAvGZFcyILBxxMLzRZ6s-4XFwvjSVzNewbWpkFuaT1-Q0SmbVZR7Wtv7gCE/exec"; 
 
-    function addBook() {
-        const list = document.getElementById("booksList");
-        const row = document.createElement("div");
-        row.className = "book-row";
-        row.innerHTML = `
-            <input type="text" class="b-name" placeholder="Book Name" required>
-            <input type="number" class="b-max" placeholder="Max" value="100" required>
-            <input type="number" class="b-pass" placeholder="Pass" value="33" required>
-            <input type="number" class="b-obt" placeholder="Obtained" required>
-            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">X</button>
-        `;
-        list.appendChild(row);
-    }
-
-    document.getElementById('adminForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        if(!API_URL) {
-            alert("Abhi Google Sheet ka link dalna baaki hai! Kripya pehle link update karein.");
-            return;
+        function addSubjectRow(name='', max='100', pass='33', obt='') {
+            const div = document.createElement('div');
+            div.className = 'subject-row';
+            div.innerHTML = `
+                <input type="text" placeholder="Kitab" value="${name}" class="s-name">
+                <input type="number" placeholder="100" value="${max}" class="s-max">
+                <input type="number" placeholder="33" value="${pass}" class="s-pass">
+                <input type="number" placeholder="Marks" value="${obt}" class="s-obt">
+                <button class="btn-red" onclick="this.parentElement.remove()">X</button>
+            `;
+            document.getElementById('subjectsBox').appendChild(div);
         }
 
-        const btn = document.getElementById('submitBtn');
-        const msg = document.getElementById('msg');
-        btn.innerText = "⏳ Saving Data...";
-        btn.disabled = true;
-        msg.innerText = "";
+        // Jab Class ka naam likha jaye, toh memory check karo
+        function loadClassTemplate() {
+            const cls = document.getElementById('className').value.trim().toLowerCase();
+            const box = document.getElementById('subjectsBox');
+            
+            // Agar class ka naam badla gaya hai, tabhi box khali karke memory se load karo
+            if(!cls) return;
 
-        const books = document.querySelectorAll('.book-row');
-        let subjectsData = [];
-        books.forEach(b => {
-            subjectsData.push({
-                name: b.querySelector('.b-name').value,
-                max: b.querySelector('.b-max').value,
-                pass: b.querySelector('.b-pass').value,
-                obt: b.querySelector('.b-obt').value
-            });
-        });
-
-        const data = {
-            "Month": document.getElementById('month').value,
-            "Dakhila": document.getElementById('dakhila').value,
-            "Name": document.getElementById('name').value,
-            "Class": document.getElementById('class').value,
-            "Photo": document.getElementById('photo').value,
-            "Subjects": JSON.stringify(subjectsData)
-        };
-
-        fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(data)
-        }).then(() => {
-            msg.style.color = "green";
-            msg.innerText = "✅ Result Online Save Ho Gaya!";
-            btn.innerText = "💾 Save Result to Internet";
-            btn.disabled = false;
-            document.getElementById('adminForm').reset();
-        }).catch(err => {
-            msg.style.color = "red";
-            msg.innerText = "❌ Internet ka masla hai ya link galat hai.";
-            btn.innerText = "💾 Save Result to Internet";
-            btn.disabled = false;
-        });
-    });
-
-    function searchStudent() {
-        const searchVal = document.getElementById('searchDakhila').value;
-        const searchMsg = document.getElementById('searchMsg');
-        
-        if(!API_URL) {
-            searchMsg.innerText = "⚠️ Abhi Google Sheet ka link nahi dala hai.";
-            searchMsg.style.color = "red";
-            return;
-        }
-        if(!searchVal) {
-            searchMsg.innerText = "⚠️ Pehle Dakhila Number daalein.";
-            searchMsg.style.color = "red";
-            return;
-        }
-
-        searchMsg.innerText = "⏳ Dhoondh raha hai...";
-        searchMsg.style.color = "blue";
-
-        fetch(API_URL)
-        .then(res => res.json())
-        .then(data => {
-            if(data.status === "success") {
-                const student = data.data.find(s => s.Dakhila == searchVal);
-                if(student) {
-                    searchMsg.innerHTML = `✅ <b>${student.Name}</b> (Class: ${student.Class}) ka result pehle se sheet mein maujood hai.`;
-                    searchMsg.style.color = "green";
-                } else {
-                    searchMsg.innerText = "❌ Is Dakhila number ka koi result nahi mila. Aap naya form bhar sakte hain.";
-                    searchMsg.style.color = "red";
+            // Memory se data nikalna
+            const savedData = localStorage.getItem('classTemplate_' + cls);
+            
+            if(savedData) {
+                // Agar memory mein kitabein hain, toh pehle purani mitao, phir auto-fill karo
+                box.innerHTML = '';
+                const books = JSON.parse(savedData);
+                books.forEach(b => addSubjectRow(b.name, b.max, b.pass, '')); // 'Obtained' ko khali ('') rakha gaya hai
+            } else {
+                // Agar nayi class hai, aur box khali hai, toh ek khali line de do
+                if(box.children.length === 0) {
+                    addSubjectRow();
                 }
             }
-        })
-        .catch(err => {
-            searchMsg.innerText = "❌ Check karne mein masla aaya. Link check karein.";
-            searchMsg.style.color = "red";
-        });
-    }
-</script>
+        }
 
+        // Result Save karne se pehle kitabon ko us Class ke naam se memory mein lock karna
+        function saveCurrentClassTemplate() {
+            const cls = document.getElementById('className').value.trim().toLowerCase();
+            if(!cls) return;
+
+            const rows = document.querySelectorAll('.subject-row');
+            const books = [];
+            rows.forEach(row => {
+                books.push({
+                    name: row.querySelector('.s-name').value,
+                    max: row.querySelector('.s-max').value,
+                    pass: row.querySelector('.s-pass').value
+                });
+            });
+            
+            localStorage.setItem('classTemplate_' + cls, JSON.stringify(books));
+        }
+
+        function saveResult() {
+            const month = document.getElementById('month').value;
+            const cls = document.getElementById('className').value.trim();
+            const name = document.getElementById('studentName').value.trim();
+            const dakhila = document.getElementById('dakhila').value.trim();
+            const photo = document.getElementById('photo').value.trim();
+            
+            if(!cls || !dakhila || !name) { alert('Class, Naam aur Dakhila number zaruri hai!'); return; }
+
+            // 1. Kitabon ko is Class ke liye hamesha ke liye memory mein save kar lo
+            saveCurrentClassTemplate();
+
+            // 2. Data ikattha karo
+            const rows = document.querySelectorAll('.subject-row');
+            const subjects = [];
+            rows.forEach(row => {
+                subjects.push({
+                    name: row.querySelector('.s-name').value,
+                    max: row.querySelector('.s-max').value,
+                    pass: row.querySelector('.s-pass').value,
+                    obt: row.querySelector('.s-obt').value
+                });
+            });
+
+            const payload = {
+                action: "add",
+                Month: month,
+                Name: name,
+                Dakhila: dakhila,
+                Class: cls,
+                Photo: photo,
+                Subjects: subjects // Bina JSON.stringify kiye bhej rahe hain taaki AI asani se padh le
+            };
+
+            const btn = document.getElementById('saveBtn');
+            const msg = document.getElementById('msg');
+            btn.innerText = "⏳ Saving...";
+            btn.disabled = true;
+            msg.innerText = "";
+
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            }).then(res => res.json()).then(data => {
+                btn.innerText = "💾 Save Result to Internet";
+                btn.disabled = false;
+                if(data.status === 'success') {
+                    msg.style.color = "green";
+                    msg.innerText = "✅ Result Online Save Ho Gaya!";
+                    
+                    // JADU: Yahan hum Class aur Month ko chod kar baaki form khali kar rahe hain
+                    document.getElementById('studentName').value = '';
+                    document.getElementById('dakhila').value = '';
+                    
+                    // Box khali karke auto-reload karwa rahe hain
+                    document.getElementById('subjectsBox').innerHTML = '';
+                    loadClassTemplate(); 
+                    
+                    setTimeout(() => msg.innerText = "", 4000);
+                } else {
+                    msg.style.color = "red";
+                    msg.innerText = "❌ Error: " + data.message;
+                }
+            }).catch(e => {
+                btn.innerText = "💾 Save Result to Internet";
+                btn.disabled = false;
+                msg.style.color = "red";
+                msg.innerText = "❌ Data Sheet mein bhej diya gaya hai (Network Error).";
+            });
+        }
+
+        // Shuru mein ek khali line dene ke liye
+        addSubjectRow();
+    </script>
 </body>
 </html>
