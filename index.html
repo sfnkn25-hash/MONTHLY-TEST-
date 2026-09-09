@@ -36,14 +36,35 @@
 
         <label>Mahina (Month):</label>
         <select id="month">
-            <option value="August">August</option>
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August" selected>August</option>
             <option value="September">September</option>
             <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
         </select>
 
         <label>Class Ka Naam (Class Name):</label>
-        <input type="text" id="className" placeholder="Maslan: Rabia, Ula, Sania" onkeyup="loadClassTemplate()">
-        <small style="color: gray;">Class ka naam likhte hi purani kitabein auto-load ho jayengi.</small>
+        <select id="className" onchange="loadClassTemplate()">
+            <option value="">-- Select Class --</option>
+            <option value="Hifz">Hifz</option>
+            <option value="I'dadia">I'dadia</option>
+            <option value="Ula">Ula</option>
+            <option value="Sania">Sania</option>
+            <option value="Salisa">Salisa</option>
+            <option value="Rabia">Rabia</option>
+            <option value="Khamisa">Khamisa</option>
+            <option value="Sadisa">Sadisa</option>
+            <option value="Sabiya">Sabiya</option>
+            <option value="Dora-e-Hadith">Dora-e-Hadith</option>
+        </select>
+        <small style="color: gray;">Class select karte hi purani kitabein auto-load ho jayengi.</small>
 
         <label>Bacche Ka Naam (Student Name):</label>
         <input type="text" id="studentName" placeholder="Naam likhein">
@@ -79,48 +100,50 @@
 
     <script>
         // ==========================================
-        // YAHAN APNA APPS SCRIPT KA URL DAALEIN
+        // APPS SCRIPT URL YAHAN LAGA HUA HAI
         // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycbx3-d4LwAvGZFcyILBxxMLzRZ6s-4XFwvjSVzNewbWpkFuaT1-Q0SmbVZR7Wtv7gCE/exec"; 
 
-        function addSubjectRow(name='', max='100', pass='33', obt='') {
+        function addSubjectRow(name='', max='100', pass='40', obt='') {
             const div = document.createElement('div');
             div.className = 'subject-row';
             div.innerHTML = `
                 <input type="text" placeholder="Kitab" value="${name}" class="s-name">
                 <input type="number" placeholder="100" value="${max}" class="s-max">
-                <input type="number" placeholder="33" value="${pass}" class="s-pass">
+                <input type="number" placeholder="40" value="${pass}" class="s-pass">
                 <input type="number" placeholder="Marks" value="${obt}" class="s-obt">
                 <button class="btn-red" onclick="this.parentElement.remove()">X</button>
             `;
             document.getElementById('subjectsBox').appendChild(div);
         }
 
-        // Jab Class ka naam likha jaye, toh memory check karo
+        // Jab Class dropdown se select ho, toh memory check karo
         function loadClassTemplate() {
             const cls = document.getElementById('className').value.trim().toLowerCase();
             const box = document.getElementById('subjectsBox');
             
-            // Agar class ka naam badla gaya hai, tabhi box khali karke memory se load karo
-            if(!cls) return;
+            if(!cls) {
+                box.innerHTML = '';
+                addSubjectRow();
+                return;
+            }
 
             // Memory se data nikalna
             const savedData = localStorage.getItem('classTemplate_' + cls);
             
             if(savedData) {
-                // Agar memory mein kitabein hain, toh pehle purani mitao, phir auto-fill karo
+                // Agar pehle se kitabein save hain, toh auto-fill karo
                 box.innerHTML = '';
                 const books = JSON.parse(savedData);
-                books.forEach(b => addSubjectRow(b.name, b.max, b.pass, '')); // 'Obtained' ko khali ('') rakha gaya hai
+                books.forEach(b => addSubjectRow(b.name, b.max, b.pass, '')); 
             } else {
-                // Agar nayi class hai, aur box khali hai, toh ek khali line de do
-                if(box.children.length === 0) {
-                    addSubjectRow();
-                }
+                // Nayi class hai toh ek khali line do
+                box.innerHTML = '';
+                addSubjectRow();
             }
         }
 
-        // Result Save karne se pehle kitabon ko us Class ke naam se memory mein lock karna
+        // Result Save karne par kitabon ko yaad rakhna
         function saveCurrentClassTemplate() {
             const cls = document.getElementById('className').value.trim().toLowerCase();
             if(!cls) return;
@@ -147,10 +170,10 @@
             
             if(!cls || !dakhila || !name) { alert('Class, Naam aur Dakhila number zaruri hai!'); return; }
 
-            // 1. Kitabon ko is Class ke liye hamesha ke liye memory mein save kar lo
+            // 1. Kitabon ko hamesha ke liye save karo is class ke naam par
             saveCurrentClassTemplate();
 
-            // 2. Data ikattha karo
+            // 2. Data bhejte waqt padhai ka record lo
             const rows = document.querySelectorAll('.subject-row');
             const subjects = [];
             rows.forEach(row => {
@@ -169,7 +192,7 @@
                 Dakhila: dakhila,
                 Class: cls,
                 Photo: photo,
-                Subjects: subjects // Bina JSON.stringify kiye bhej rahe hain taaki AI asani se padh le
+                Subjects: JSON.stringify(subjects) // AI ke aasan padhne ke liye Stringify kar diya
             };
 
             const btn = document.getElementById('saveBtn');
@@ -188,11 +211,11 @@
                     msg.style.color = "green";
                     msg.innerText = "✅ Result Online Save Ho Gaya!";
                     
-                    // JADU: Yahan hum Class aur Month ko chod kar baaki form khali kar rahe hain
+                    // JADU: Sirf bacchay ki details aur obtained marks mitao
                     document.getElementById('studentName').value = '';
                     document.getElementById('dakhila').value = '';
                     
-                    // Box khali karke auto-reload karwa rahe hain
+                    // Box khali karke us class ki kitabein dobara wapas laao (bina obtained marks ke)
                     document.getElementById('subjectsBox').innerHTML = '';
                     loadClassTemplate(); 
                     
@@ -205,11 +228,11 @@
                 btn.innerText = "💾 Save Result to Internet";
                 btn.disabled = false;
                 msg.style.color = "red";
-                msg.innerText = "❌ Data Sheet mein bhej diya gaya hai (Network Error).";
+                msg.innerText = "❌ Network Error.";
             });
         }
 
-        // Shuru mein ek khali line dene ke liye
+        // Shuru mein form par ek khali line
         addSubjectRow();
     </script>
 </body>
